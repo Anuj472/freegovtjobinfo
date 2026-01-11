@@ -34,7 +34,7 @@ const QuickLinkSection = ({ title, items, getHref }: { title: string, items: any
       {items.map((item) => (
         <a 
           key={item.id} 
-          href={getHref(item.id)}
+          href={item.id === 'all-india' ? '#/' : getHref(item.id)}
           className="text-[10px] font-bold text-blue-700 uppercase hover:bg-blue-50 px-2 py-1.5 rounded transition-colors border-b border-gray-50 last:border-0"
         >
           {item.label} Jobs
@@ -59,34 +59,45 @@ const DenseColumn = ({
     <div className={`${colorClass} text-white px-3 py-2 text-xs font-black uppercase tracking-widest text-center border-b border-gray-300`}>
       {title}
     </div>
-    <div className="p-1 overflow-y-auto max-h-[600px] scrollbar-thin">
-      {jobs.length === 0 ? (
-        <div className="py-12 text-center text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">No Alerts Available Currently</div>
-      ) : (
-        <ul className="divide-y divide-gray-100">
-          {jobs.map((job) => (
-            <li key={job.id} className="py-2 px-3 hover:bg-blue-50 transition-colors group">
-              <button 
-                onClick={() => onSelect(job.slug)}
-                className="text-left w-full block"
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-start gap-2 overflow-hidden">
-                    <span className="dense-link leading-tight truncate">
-                      {job.organization}: {job.jobRole}
-                    </span>
+    <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse table-fixed min-w-[500px]">
+        <thead className="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th className="px-3 py-2 text-[9px] font-black uppercase tracking-widest border-r border-gray-100">Job Notification</th>
+            <th className="px-3 py-2 text-[9px] font-black uppercase tracking-widest w-[140px] text-center">Qualification</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {jobs.length === 0 ? (
+            <tr>
+              <td colSpan={2} className="py-12 text-center text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">No Alerts Available Currently</td>
+            </tr>
+          ) : (
+            jobs.map((job) => (
+              <tr key={job.id} className="hover:bg-blue-50/50 transition-colors group">
+                <td className="px-3 py-2 border-r border-gray-100 min-w-0">
+                  <button 
+                    onClick={() => onSelect(job.slug)}
+                    className="dense-link block truncate text-left w-full hover:underline decoration-red-500 decoration-1 underline-offset-4"
+                  >
+                    {job.organization}: {job.jobRole}
                     {job.isLatest && (
-                      <span className="text-[8px] font-black text-red-600 uppercase tracking-tighter shrink-0 animate-blink mt-0.5 border border-red-100 px-1 rounded bg-red-50">
+                      <span className="text-[8px] font-black text-red-600 uppercase tracking-tighter animate-blink ml-2 border border-red-100 px-1 rounded bg-red-50">
                         New
                       </span>
                     )}
-                  </div>
-                </div>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                  </button>
+                </td>
+                <td className="px-3 py-2 text-center">
+                  <span className="text-[9px] font-bold text-gray-600 uppercase truncate block">
+                    {job.qualification[0]}
+                  </span>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   </div>
 );
@@ -101,6 +112,9 @@ function App() {
   const [selectedQuals, setSelectedQuals] = useState<string[]>([]);
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
   const [onlyTrending, setOnlyTrending] = useState(false);
+
+  // Reliable Google Drive image delivery link
+  const logoUrl = "https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY";
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -125,10 +139,10 @@ function App() {
 
       if (!hash || hash === '/' || hash === '/all-india') {
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
-        document.title = `${SITE_NAME} - Latest Govt Jobs 2026`;
+        document.title = `${SITE_NAME} - Latest Govt Jobs 2025`;
       } else if (hash === '/trending') {
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setOnlyTrending(true); setView('HOME');
-        document.title = `Trending Jobs 2026 - ${SITE_NAME}`;
+        document.title = `Trending Jobs 2025 - ${SITE_NAME}`;
       } else if (hash === '/sitemap') {
         setView('SITEMAP');
         document.title = `Website Sitemap - ${SITE_NAME}`;
@@ -151,7 +165,7 @@ function App() {
         const qId = hash.replace('/qualification/', '');
         const q = QUALIFICATIONS.find(item => item.id === qId);
         setSelectedState('all-india'); setSelectedQuals([qId]); setSelectedCats([]); setView('HOME');
-        document.title = `${q?.label || 'Qualification'} Govt Jobs 2026 - ${SITE_NAME}`;
+        document.title = `${q?.label || 'Qualification'} Govt Jobs 2025 - ${SITE_NAME}`;
       } else if (hash.startsWith('/category/')) {
         const cId = hash.replace('/category/', '');
         const c = CATEGORIES.find(item => item.id === cId);
@@ -162,7 +176,7 @@ function App() {
         const sMatch = STATES.find(s => s.id === cleanHash);
         if (sMatch) {
           setSelectedState(cleanHash); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
-          document.title = `${sMatch.label} Govt Jobs 2026 - ${SITE_NAME}`;
+          document.title = `${sMatch.label} Govt Jobs 2025 - ${SITE_NAME}`;
         } else {
           setView('HOME');
           document.title = SITE_NAME;
@@ -180,10 +194,10 @@ function App() {
   const handleResetFilters = () => { window.location.hash = '/'; };
 
   const getPageTitle = useCallback(() => {
-    if (onlyTrending) return "Trending Job Alerts 2026";
+    if (onlyTrending) return "Trending Job Alerts 2025";
     if (selectedState !== 'all-india') {
       const state = STATES.find(s => s.id === selectedState);
-      return `${state?.label || 'State'} Govt Jobs 2026`;
+      return `${state?.label || 'State'} Govt Jobs 2025`;
     }
     if (selectedQuals.length > 0) {
       const quals = selectedQuals.map(qId => QUALIFICATIONS.find(q => q.id === qId)?.label).filter(Boolean);
@@ -314,7 +328,7 @@ function App() {
               ) : (
                 <div className="w-full">
                   <DenseColumn 
-                    title="Active Alerts - Featured Openings" 
+                    title="Active Alerts - Featured Openings 2025" 
                     colorClass="bg-blue-600" 
                     jobs={filteredJobs.slice(0, 15)} 
                     onSelect={handleJobSelect} 
@@ -324,7 +338,7 @@ function App() {
               
               <div className="mt-8">
                 <div className="bg-blue-900 text-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] inline-block rounded-t-sm">
-                   Complete Recruitment Archive 2026
+                   Complete Recruitment Archive 2025
                 </div>
                 <JobTable jobs={filteredJobs} loading={loading} onSelectJob={handleJobSelect} />
               </div>
@@ -368,7 +382,18 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col items-center gap-6">
             <div className="bg-white p-1.5 rounded shadow-lg cursor-pointer hover:scale-105 transition-transform" onClick={handleNavigateHome}>
-              <img src="logo.png" alt="FreeGovtJob Portal Footer" className="h-10 md:h-12 w-auto object-contain" />
+              <img 
+                src={logoUrl} 
+                alt="FreeGovtJob Portal Footer" 
+                className="h-10 md:h-12 w-auto object-contain"
+                crossOrigin="anonymous"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (!target.src.includes('uc?export')) {
+                    target.src = "https://drive.google.com/uc?export=view&id=16mxMJQS75JFnupMKIFRtiOzPECzE94qY";
+                  }
+                }}
+              />
             </div>
             
             <nav className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
@@ -385,7 +410,7 @@ function App() {
             
             <div className="pt-4 border-t border-gray-800 w-full text-center">
               <div className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600">
-                © 2026 {SITE_NAME} | ALL RIGHTS RESERVED
+                © 2025 {SITE_NAME} | ALL RIGHTS RESERVED
               </div>
             </div>
           </div>
