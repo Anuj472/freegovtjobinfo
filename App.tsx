@@ -317,7 +317,7 @@ function App() {
                 </div>
                 <div className="flex items-center gap-2">
                   <a href="https://t.me/freegovtjob" target="_blank" rel="noopener noreferrer" className="bg-[#0088cc] text-white px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest hover:bg-[#0077b5] shadow-sm flex items-center gap-1.5">
-                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.891 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.331-.373-.121l-6.871 4.326-2.962-.924c-.643-.201-.657-.643.134-.952l11.57-4.458c.537-.196 1.006.128.832.93z"/></svg>
+                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56l.4-5.63 10.25-9.27c.45-.4-.1-.6-.7-.2L6.32 12.5l-5.45-1.7c-1.2-.37-1.2-1.2.25-1.77l21.31-8.21c1-.37 1.86.23 1.48 1.97z"/></svg>
                      Join Telegram
                   </a>
                 </div>
