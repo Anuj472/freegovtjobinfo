@@ -25,4 +25,4 @@ export interface LabelInfo {
   categories: string[];
 }
 
-export type PageType = 'HOME' | 'STATE' | 'QUALIFICATION' | 'DETAIL';
+export type PageType = 'HOME' | 'STATE' | 'QUALIFICATION' | 'DETAIL' | 'SITEMAP' | 'PRIVACY' | 'CONTACT';

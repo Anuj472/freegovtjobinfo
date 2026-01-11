@@ -11,9 +11,9 @@ interface JobTableProps {
 const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
   if (loading) {
     return (
-      <div className="w-full space-y-4">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="animate-pulse bg-white p-4 rounded-xl border border-gray-200 h-24"></div>
+      <div className="w-full space-y-1">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <div key={i} className="animate-pulse bg-white border border-gray-200 h-8"></div>
         ))}
       </div>
     );
@@ -21,70 +21,51 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
 
   if (jobs.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-        <p className="text-gray-500 text-lg">No jobs found for this filter.</p>
-        <button className="mt-4 text-blue-600 font-semibold hover:underline">Reset Filters</button>
+      <div className="bg-white border border-gray-300 p-8 text-center">
+        <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">No Matching Notifications Found</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="bg-white border border-gray-300 shadow-sm overflow-hidden rounded-b-sm">
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-gray-50 border-b border-gray-200">
+        <table className="w-full text-left border-collapse table-fixed min-w-[600px]">
+          <thead className="bg-gray-100 border-b border-gray-300">
             <tr>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">S.No</th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Organization</th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Job Role</th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Qualification</th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Last Date</th>
-              <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Action</th>
+              <th className="px-2 py-2 text-[9px] font-black uppercase tracking-widest w-[40px] text-center border-r border-gray-200">#</th>
+              <th className="px-3 py-2 text-[9px] font-black uppercase tracking-widest border-r border-gray-200">Recruitment Notification</th>
+              <th className="px-3 py-2 text-[9px] font-black uppercase tracking-widest w-[100px] text-center border-r border-gray-200">Last Date</th>
+              <th className="px-3 py-2 text-[9px] font-black uppercase tracking-widest w-[80px] text-center">Info</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-200">
             {jobs.map((job, idx) => {
               const lastDateObj = new Date(job.lastDate);
-              const today = new Date();
-              const diffDays = Math.ceil((lastDateObj.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-              const isClosingSoon = diffDays > 0 && diffDays <= 7;
+              const diffDays = Math.ceil((lastDateObj.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+              const isClosingSoon = diffDays > 0 && diffDays <= 5;
 
               return (
-                <tr key={job.id} className="hover:bg-blue-50 transition-colors group">
-                  <td className="px-6 py-5 text-sm text-gray-500">{idx + 1}</td>
-                  <td className="px-6 py-5">
-                    <span className="font-bold text-gray-900">{job.organization}</span>
-                  </td>
-                  <td className="px-6 py-5">
+                <tr key={job.id} className="hover:bg-blue-50/50 transition-colors group">
+                  <td className="px-2 py-2 text-[10px] font-bold text-gray-400 text-center border-r border-gray-100 italic">{idx + 1}</td>
+                  <td className="px-3 py-2 border-r border-gray-100 min-w-0">
                     <button 
                       onClick={() => onSelectJob(job.slug)}
-                      className="text-blue-600 font-medium hover:text-blue-800 transition-colors text-left"
+                      className="dense-link block truncate text-left w-full hover:underline decoration-red-500 decoration-2 underline-offset-4"
                     >
-                      {job.jobRole}
+                      {job.organization} - {job.jobRole}
+                      {job.isLatest && <span className="text-[8px] font-black text-red-600 uppercase ml-1 animate-blink px-1 bg-red-50 border border-red-100 rounded">NEW</span>}
                     </button>
-                    {job.isLatest && (
-                      <span className="ml-2 bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tighter">New</span>
-                    )}
                   </td>
-                  <td className="px-6 py-5">
-                    <div className="flex flex-wrap gap-1">
-                      {job.qualification.map((q) => (
-                        <span key={q} className="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full border border-blue-100">
-                          {q}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span className={`text-sm font-medium ${isClosingSoon ? 'text-orange-600' : 'text-gray-700'}`}>
+                  <td className="px-3 py-2 whitespace-nowrap text-center border-r border-gray-100">
+                    <span className={`text-[10px] font-bold uppercase tracking-tighter ${isClosingSoon ? 'text-red-600 font-black' : 'text-gray-700'}`}>
                       {new Date(job.lastDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                      {isClosingSoon && <div className="text-[10px] font-bold">Closing Soon!</div>}
                     </span>
                   </td>
-                  <td className="px-6 py-5">
+                  <td className="px-3 py-2 text-center">
                     <button 
                       onClick={() => onSelectJob(job.slug)}
-                      className="bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 active:scale-95 transition-all"
+                      className="text-blue-700 text-[9px] font-black uppercase hover:text-red-700 transition-colors underline decoration-dotted"
                     >
                       Details
                     </button>
@@ -94,14 +75,6 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
             })}
           </tbody>
         </table>
-      </div>
-      <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-        <span className="text-sm text-gray-500">Showing {jobs.length} of {jobs.length} jobs</span>
-        <div className="flex gap-2">
-          <button className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50" disabled>Previous</button>
-          <button className="px-3 py-1 bg-white border border-gray-300 rounded text-sm text-blue-600 font-bold shadow-sm">1</button>
-          <button className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50" disabled>Next</button>
-        </div>
       </div>
     </div>
   );

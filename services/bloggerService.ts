@@ -15,22 +15,35 @@ function transformBloggerPost(post: any): Job {
   const foundStates: string[] = [];
   const foundQuals: string[] = [];
   const foundCats: string[] = [];
+  let lastDate = "2026-12-31"; // Default fallback
 
   labels.forEach((l: string) => {
     const lowerLabel = l.toLowerCase();
     
-    // Pattern: [Name]-Jobs
-    const suffix = "-jobs";
-    if (lowerLabel.endsWith(suffix)) {
-      const baseName = l.substring(0, l.length - suffix.length).trim();
-      const lowerBase = baseName.toLowerCase();
+    // Check for ddmmyyyy date label (exactly 8 digits)
+    if (/^\d{8}$/.test(l)) {
+      const day = l.substring(0, 2);
+      const month = l.substring(2, 4);
+      const year = l.substring(4, 8);
+      lastDate = `${year}-${month}-${day}`;
+    }
 
+    const suffix = "-jobs";
+    const lowerBase = lowerLabel.endsWith(suffix) 
+      ? lowerLabel.substring(0, lowerLabel.length - suffix.length).trim() 
+      : lowerLabel;
+
+    // Pattern: [Name]-Jobs (e.g., Haryana-Jobs, Graduate-Jobs, Police-Jobs)
+    if (lowerLabel.endsWith(suffix)) {
       // Match States
       const stateMatch = STATES.find(s => s.label.toLowerCase() === lowerBase);
       if (stateMatch) foundStates.push(stateMatch.id);
 
-      // Match Qualifications
-      const qualMatch = QUALIFICATIONS.find(q => q.label.toLowerCase() === lowerBase);
+      // Match Qualifications (Handle "Graduate" mapping to "Graduation")
+      const qualMatch = QUALIFICATIONS.find(q => 
+        q.label.toLowerCase() === lowerBase || 
+        (lowerBase === 'graduate' && q.id === 'graduation')
+      );
       if (qualMatch) foundQuals.push(qualMatch.label);
 
       // Match Categories
@@ -38,17 +51,18 @@ function transformBloggerPost(post: any): Job {
       if (catMatch) foundCats.push(catMatch.label);
     }
 
-    // Special case for Faculty (which user mentioned previously)
-    if (lowerLabel === 'faculty') {
-      foundCats.push('Faculty');
+    // Special case direct matching
+    if (lowerBase === 'graduate' || lowerBase === 'graduation') {
+      foundQuals.push('Graduation');
     }
   });
 
-  // Extract date from content
-  let lastDate = "2026-12-31"; 
-  const dateMatch = post.content.match(/(\d{1,2}[-/]\d{1,2}[-/]\d{4})|(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
-  if (dateMatch) {
-    lastDate = dateMatch[0];
+  // If lastDate is still the default, try extracting from content via regex
+  if (lastDate === "2026-12-31") {
+    const dateMatch = post.content.match(/(\d{1,2}[-/]\d{1,2}[-/]\d{4})|(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
+    if (dateMatch) {
+      lastDate = dateMatch[0];
+    }
   }
 
   const slug = post.url 
@@ -65,7 +79,7 @@ function transformBloggerPost(post: any): Job {
     slug: slug,
     organization: organization,
     jobRole: jobRole,
-    qualification: foundQuals.length > 0 ? foundQuals : ["Check Detail"],
+    qualification: foundQuals.length > 0 ? Array.from(new Set(foundQuals)) : ["Check Detail"],
     lastDate: lastDate,
     state: foundStates.length > 0 ? foundStates : ["all-india"],
     category: foundCats.length > 0 ? foundCats : ["General"],
@@ -77,7 +91,8 @@ function transformBloggerPost(post: any): Job {
     isLatest: labels.some((l: string) => l.toLowerCase() === 'latest-jobs'),
     isTrending: labels.some((l: string) => 
       l.toLowerCase() === 'trending_job' || 
-      l.toLowerCase() === 'verified-recruitment'
+      l.toLowerCase() === 'verified-recruitment' ||
+      l.toLowerCase() === 'trending'
     ),
     thumbnailUrl: post.images?.[0]?.url || `https://picsum.photos/seed/${post.id}/400/200`
   };
@@ -93,9 +108,12 @@ export async function fetchJobs(): Promise<Job[]> {
     const data = await response.json();
     if (!data.items) return [];
 
-    // All jobs should have 'Latest-Jobs' label
+    // Filter to show only job posts
     const jobPosts = data.items.filter((post: any) => 
-      post.labels?.some((l: string) => l.toLowerCase() === 'latest-jobs')
+      post.labels?.some((l: string) => 
+        l.toLowerCase() === 'latest-jobs' || 
+        l.toLowerCase().endsWith('-jobs')
+      )
     );
 
     return jobPosts.map(transformBloggerPost);
