@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({
           onClick={onNavigateHome}
         >
           <img 
-            src="/logo.png" 
+            src="/Logo.png" 
             alt="Govt Job Info" 
             className="h-24 md:h-32 w-auto object-contain transition-transform hover:scale-105"
             onError={(e) => {
