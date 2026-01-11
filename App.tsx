@@ -368,7 +368,7 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col items-center gap-6">
             <div className="bg-white p-1.5 rounded shadow-lg cursor-pointer hover:scale-105 transition-transform" onClick={handleNavigateHome}>
-              <img src="Logo.png" alt="FreeGovtJob Portal Footer" className="h-10 md:h-12 w-auto object-contain" />
+              <img src="logo.png" alt="FreeGovtJob Portal Footer" className="h-10 md:h-12 w-auto object-contain" />
             </div>
             
             <nav className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
