@@ -128,10 +128,10 @@ function App() {
         document.title = `${SITE_NAME} - Latest Govt Jobs 2026`;
       } else if (hash === '/trending') {
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setOnlyTrending(true); setView('HOME');
-        document.title = `Trending Jobs - ${SITE_NAME}`;
+        document.title = `Trending Jobs 2026 - ${SITE_NAME}`;
       } else if (hash === '/sitemap') {
         setView('SITEMAP');
-        document.title = `Sitemap - ${SITE_NAME}`;
+        document.title = `Website Sitemap - ${SITE_NAME}`;
       } else if (hash === '/privacy-policy') {
         setView('PRIVACY');
         document.title = `Privacy Policy - ${SITE_NAME}`;
@@ -156,7 +156,7 @@ function App() {
         const cId = hash.replace('/category/', '');
         const c = CATEGORIES.find(item => item.id === cId);
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([cId]); setView('HOME');
-        document.title = `${c?.label || 'Sector'} Job Openings - ${SITE_NAME}`;
+        document.title = `${c?.label || 'Sector'} Job Notifications - ${SITE_NAME}`;
       } else {
         const cleanHash = hash.startsWith('/') ? hash.substring(1) : hash;
         const sMatch = STATES.find(s => s.id === cleanHash);
@@ -180,18 +180,18 @@ function App() {
   const handleResetFilters = () => { window.location.hash = '/'; };
 
   const getPageTitle = useCallback(() => {
-    if (onlyTrending) return "Trending Job Alerts";
+    if (onlyTrending) return "Trending Job Alerts 2026";
     if (selectedState !== 'all-india') {
       const state = STATES.find(s => s.id === selectedState);
       return `${state?.label || 'State'} Govt Jobs 2026`;
     }
     if (selectedQuals.length > 0) {
       const quals = selectedQuals.map(qId => QUALIFICATIONS.find(q => q.id === qId)?.label).filter(Boolean);
-      return `${quals.join(', ')} Notifications 2026`;
+      return `${quals.join(', ')} Notification Alerts`;
     }
     if (selectedCats.length > 0) {
       const cats = selectedCats.map(cId => CATEGORIES.find(c => c.id === cId)?.label).filter(Boolean);
-      return `${cats.join(', ')} Job Alerts`;
+      return `${cats.join(', ')} Sarkari Jobs`;
     }
     return "Latest Recruitment Notifications";
   }, [onlyTrending, selectedState, selectedQuals, selectedCats]);
@@ -219,22 +219,22 @@ function App() {
       case 'SITEMAP':
         return (
           <StaticPage title="Website Sitemap" onBack={handleNavigateHome}>
-            <p className="text-gray-600 mb-8 italic">Navigate through our comprehensive collection of government job notifications categorized by sector, qualification, and region.</p>
+            <p className="text-gray-600 mb-8 italic">Find your way through our extensive database of government jobs categorized by state, sector, and qualification.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               <section>
-                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">Sectors</h2>
+                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Sector</h2>
                 <ul className="space-y-2 list-none p-0">
-                  {CATEGORIES.map(c => <li key={c.id}><a href={`#/category/${c.id}`} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{c.label} Jobs</a></li>)}
+                  {CATEGORIES.map(c => <li key={c.id}><a href={`#/category/${c.id}`} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{c.label} Alerts</a></li>)}
                 </ul>
               </section>
               <section>
-                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">Qualifications</h2>
+                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Qualification</h2>
                 <ul className="space-y-2 list-none p-0">
                   {QUALIFICATIONS.map(q => <li key={q.id}><a href={`#/qualification/${q.id}`} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{q.label} Jobs</a></li>)}
                 </ul>
               </section>
               <section>
-                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">States/Regions</h2>
+                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Region</h2>
                 <div className="grid grid-cols-1 gap-1">
                   {STATES.map(s => <li key={s.id} className="list-none"><a href={`#/${s.id}`} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{s.label}</a></li>)}
                 </div>
@@ -246,43 +246,37 @@ function App() {
         return (
           <StaticPage title="Privacy Policy" onBack={handleNavigateHome}>
             <div className="space-y-6 text-gray-700 leading-relaxed text-justify">
-              <p>At <strong>{SITE_NAME}</strong>, accessible from freegovtjob.info, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by us and how we use it.</p>
-              
-              <h3 className="text-lg font-black text-blue-900 uppercase">Log Files</h3>
-              <p>FreeGovtJob.info follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks.</p>
-              
-              <h3 className="text-lg font-black text-blue-900 uppercase">Cookies and Web Beacons</h3>
-              <p>Like any other website, FreeGovtJob.info uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>
-
-              <h3 className="text-lg font-black text-blue-900 uppercase">Third Party Privacy Policies</h3>
-              <p>Our website provides links to external government portals. FreeGovtJob.info's Privacy Policy does not apply to other advertisers or websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party servers for more detailed information.</p>
-              
-              <h3 className="text-lg font-black text-blue-900 uppercase">Consent</h3>
-              <p>By using our website, you hereby consent to our Privacy Policy and agree to its terms and conditions.</p>
+              <p>Welcome to <strong>{SITE_NAME}</strong>. We value your privacy and are committed to protecting it. This policy outlines how we handle data on our platform.</p>
+              <h3 className="text-lg font-black text-blue-900 uppercase">Information Security</h3>
+              <p>We do not collect personal identifiable information (PII) like names or addresses. We only track anonymous visit data to improve site performance and relevancy of job alerts.</p>
+              <h3 className="text-lg font-black text-blue-900 uppercase">External Official Links</h3>
+              <p>Our job detail pages link directly to official Government Department websites. Users are encouraged to verify information on the official portals before applying. We are not responsible for the privacy practices of external sites.</p>
+              <h3 className="text-lg font-black text-blue-900 uppercase">Updates</h3>
+              <p>This policy may be updated from time to time. Please check back regularly to stay informed about how we protect your information.</p>
             </div>
           </StaticPage>
         );
       case 'CONTACT':
         return (
-          <StaticPage title="Contact Us" onBack={handleNavigateHome}>
+          <StaticPage title="Contact Support" onBack={handleNavigateHome}>
             <div className="max-w-2xl space-y-8">
-              <p className="text-gray-700 font-medium">Have queries regarding a job notification? Or want to report a dead link? Feel free to reach out to us. We typically respond within 24-48 hours.</p>
+              <p className="text-gray-700 font-medium">Have questions or found an issue with a job link? Reach out to us via the channels below. We aim to respond to all inquiries within 24 hours.</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 group hover:border-blue-400 transition-colors">
-                  <h4 className="font-black uppercase tracking-widest text-[10px] text-blue-800 mb-2">Official Email</h4>
+                  <h4 className="font-black uppercase tracking-widest text-[10px] text-blue-800 mb-2">Email Helpdesk</h4>
                   <a href="mailto:contact@freegovtjob.info" className="text-blue-600 font-bold hover:underline block break-all">contact@freegovtjob.info</a>
                 </div>
                 <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 group hover:border-blue-400 transition-colors">
-                  <h4 className="font-black uppercase tracking-widest text-[10px] text-blue-800 mb-2">Telegram Support</h4>
-                  <a href="https://t.me/freegovtjob" target="_blank" rel="noopener" className="text-blue-600 font-bold hover:underline block">@freegovtjob_info</a>
+                  <h4 className="font-black uppercase tracking-widest text-[10px] text-blue-800 mb-2">Social Hub</h4>
+                  <a href="https://t.me/freegovtjob" target="_blank" rel="noopener" className="text-blue-600 font-bold hover:underline block">Telegram @freegovtjob</a>
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-gray-50 border border-gray-200 rounded-lg">
-                <h4 className="font-black text-gray-800 mb-4 uppercase text-xs">Note to Candidates</h4>
-                <p className="text-xs text-gray-600 leading-loose">
-                  Please note that we are a notification portal. We do not hire people directly. For application status or exam results, please visit the official government department website mentioned in the specific job detail page.
+              <div className="mt-8 p-6 bg-red-50 border border-red-100 rounded-lg">
+                <h4 className="font-black text-red-800 mb-4 uppercase text-xs">Important Disclaimer</h4>
+                <p className="text-xs text-red-700 leading-loose font-medium">
+                  FreeGovtJob.info is an information-only portal. We are not associated with any government body. Candidates are strongly advised to check the official notification from the respective department's website before applying.
                 </p>
               </div>
             </div>
@@ -308,7 +302,10 @@ function App() {
                   />
                 </div>
                 <div className="flex items-center gap-2">
-                  <a href="https://t.me/freegovtjob" target="_blank" rel="noopener noreferrer" className="bg-[#0088cc] text-white px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest hover:bg-[#0077b5] shadow-sm">Telegram</a>
+                  <a href="https://t.me/freegovtjob" target="_blank" rel="noopener noreferrer" className="bg-[#0088cc] text-white px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest hover:bg-[#0077b5] shadow-sm flex items-center gap-1.5">
+                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.891 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.331-.373-.121l-6.871 4.326-2.962-.924c-.643-.201-.657-.643.134-.952l11.57-4.458c.537-.196 1.006.128.832.93z"/></svg>
+                     Join Telegram
+                  </a>
                 </div>
               </div>
 
@@ -317,7 +314,7 @@ function App() {
               ) : (
                 <div className="w-full">
                   <DenseColumn 
-                    title="Latest Alerts - Top 15 Positions" 
+                    title="Active Alerts - Featured Openings" 
                     colorClass="bg-blue-600" 
                     jobs={filteredJobs.slice(0, 15)} 
                     onSelect={handleJobSelect} 
@@ -327,7 +324,7 @@ function App() {
               
               <div className="mt-8">
                 <div className="bg-blue-900 text-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] inline-block rounded-t-sm">
-                  Comprehensive Database
+                   Complete Recruitment Archive 2026
                 </div>
                 <JobTable jobs={filteredJobs} loading={loading} onSelectJob={handleJobSelect} />
               </div>
@@ -335,7 +332,7 @@ function App() {
 
             <aside className="lg:col-span-1">
               <QuickLinkSection 
-                title="Jobs by Sector" 
+                title="Sarkari Jobs by Sector" 
                 items={CATEGORIES} 
                 getHref={(id) => `#/category/${id}`} 
               />
@@ -345,13 +342,13 @@ function App() {
                 getHref={(id) => `#/qualification/${id}`} 
               />
               <QuickLinkSection 
-                title="Jobs by Region" 
+                title="Jobs by State" 
                 items={STATES} 
                 getHref={(id) => `#/${id}`} 
               />
-              <div className="bg-blue-50 border border-blue-200 p-4 rounded text-center">
-                 <p className="text-[10px] font-bold text-blue-800 uppercase mb-2">Subscribe for Daily Updates</p>
-                 <a href="https://t.me/freegovtjob" className="block bg-blue-600 text-white text-[9px] font-black p-2 rounded uppercase tracking-widest hover:bg-blue-700 transition-colors">Join Telegram Channel</a>
+              <div className="bg-blue-50 border border-blue-200 p-4 rounded text-center shadow-sm">
+                 <p className="text-[10px] font-bold text-blue-800 uppercase mb-2">Never Miss An Update</p>
+                 <a href="https://t.me/freegovtjob" target="_blank" rel="noopener" className="block bg-blue-600 text-white text-[9px] font-black p-2 rounded uppercase tracking-widest hover:bg-blue-700 transition-colors">Follow Our Telegram</a>
               </div>
             </aside>
           </div>
@@ -370,30 +367,25 @@ function App() {
       <footer className="bg-gray-900 text-white mt-auto border-t-4 border-blue-600">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col items-center gap-6">
-            <div className="bg-white p-1.5 rounded shadow-lg cursor-pointer" onClick={handleNavigateHome}>
-              <img src="/Logo.png" alt="FreeGovtJob Portal" className="h-12 md:h-14 w-auto object-contain" />
+            <div className="bg-white p-1.5 rounded shadow-lg cursor-pointer hover:scale-105 transition-transform" onClick={handleNavigateHome}>
+              <img src="Logo.png" alt="FreeGovtJob Portal Footer" className="h-10 md:h-12 w-auto object-contain" />
             </div>
             
             <nav className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
               <a href="#/sitemap" className="hover:text-blue-400 transition-colors">Sitemap</a>
               <a href="#/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
-              <a href="#/contact-us" className="hover:text-blue-400 transition-colors">Contact Us</a>
+              <a href="#/contact-us" className="hover:text-blue-400 transition-colors">Contact Support</a>
             </nav>
 
             <div className="text-center space-y-2">
               <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest max-w-lg mx-auto opacity-70">
-                Providing up-to-date information on Central and State government recruitment for students and job seekers across India.
+                Helping thousands of aspirants find their dream government career through verified job notifications across India.
               </p>
-              <div className="flex justify-center">
-                 <a href="https://t.me/freegovtjob" className="text-gray-400 hover:text-[#0088cc] transition-colors">
-                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.891 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.331-.373-.121l-6.871 4.326-2.962-.924c-.643-.201-.657-.643.134-.952l11.57-4.458c.537-.196 1.006.128.832.93z"/></svg>
-                 </a>
-              </div>
             </div>
             
             <div className="pt-4 border-t border-gray-800 w-full text-center">
               <div className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600">
-                © 2026 {SITE_NAME} GATEWAY
+                © 2026 {SITE_NAME} | ALL RIGHTS RESERVED
               </div>
             </div>
           </div>
