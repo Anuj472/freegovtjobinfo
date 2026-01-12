@@ -6,6 +6,7 @@ export interface Job {
   organization: string;
   jobRole: string;
   qualification: string[];
+  postDate: string; // New field for extraction from postdateDDMMYYYY label
   lastDate: string;
   state: string[];
   category: string[];

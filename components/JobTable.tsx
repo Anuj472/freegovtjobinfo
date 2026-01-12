@@ -26,16 +26,26 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
     );
   }
 
+  // Handle local navigation to prevent full page reload on normal left click
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
+    // If user is doing Ctrl+Click, Cmd+Click, or Middle-Click, let the browser handle it
+    if (e.ctrlKey || e.metaKey || e.button === 1) return;
+    
+    e.preventDefault();
+    onSelectJob(slug);
+  };
+
   return (
     <div className="bg-white border border-gray-300 shadow-sm overflow-hidden rounded-sm">
       <div className="overflow-x-auto -mx-1 px-1">
-        <table className="w-full text-left border-collapse table-fixed min-w-[650px]">
+        <table className="w-full text-left border-collapse table-fixed min-w-[750px]">
           <thead className="bg-gray-100 border-b border-gray-300">
             <tr>
               <th className="px-4 py-5 text-[9px] font-black uppercase tracking-widest border-r border-gray-200">Recruitment Alert</th>
-              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[140px] text-center border-r border-gray-200">Eligibility</th>
-              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[130px] text-center border-r border-gray-200">Last Date</th>
-              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[80px] text-center">Detail</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[120px] text-center border-r border-gray-200">Eligibility</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[110px] text-center border-r border-gray-200">Post Date</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[110px] text-center border-r border-gray-200">Last Date</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[70px] text-center">Detail</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -47,14 +57,17 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
               return (
                 <tr 
                   key={job.id} 
-                  className="hover:bg-blue-50/50 active:bg-blue-100 transition-colors group cursor-pointer"
-                  onClick={() => onSelectJob(job.slug)}
+                  className="hover:bg-blue-50/50 active:bg-blue-100 transition-colors group"
                 >
                   <td className="px-4 py-6 border-r border-gray-100 min-w-0">
                     <div className="flex flex-col">
-                      <span className="text-[14px] font-bold text-blue-700 group-hover:underline underline-offset-4 decoration-2 leading-tight">
+                      <a 
+                        href={`/job/${job.slug}`}
+                        onClick={(e) => handleLinkClick(e, job.slug)}
+                        className="text-[14px] font-bold text-blue-700 hover:underline underline-offset-4 decoration-2 leading-tight"
+                      >
                         {job.organization}
-                      </span>
+                      </a>
                       <span className="text-[11px] text-gray-600 font-semibold mt-1">
                         {job.jobRole}
                         {job.isLatest && <span className="text-[8px] font-black text-red-600 uppercase ml-2 animate-blink bg-red-50 border border-red-100 px-1.5 rounded-full inline-block">NEW</span>}
@@ -62,8 +75,13 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
                     </div>
                   </td>
                   <td className="px-3 py-6 text-center border-r border-gray-100">
-                    <span className="text-[11px] font-bold text-blue-800 uppercase bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-sm inline-block max-w-full truncate">
+                    <span className="text-[10px] font-bold text-blue-800 uppercase bg-blue-50 border border-blue-100 px-2 py-1.5 rounded-sm inline-block max-w-full truncate">
                       {job.qualification[0] || 'Check'}
+                    </span>
+                  </td>
+                  <td className="px-3 py-6 text-center border-r border-gray-100">
+                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-tight">
+                      {new Date(job.postDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </span>
                   </td>
                   <td className="px-3 py-6 text-center border-r border-gray-100">
@@ -75,9 +93,15 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
                     </div>
                   </td>
                   <td className="px-3 py-6 text-center">
-                    <svg className="w-5 h-5 mx-auto text-blue-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                    </svg>
+                    <a 
+                      href={`/job/${job.slug}`}
+                      onClick={(e) => handleLinkClick(e, job.slug)}
+                      className="inline-block p-1 text-blue-400 group-hover:text-blue-600 transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </a>
                   </td>
                 </tr>
               );

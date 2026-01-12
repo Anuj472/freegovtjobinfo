@@ -42,6 +42,8 @@ export const QUALIFICATIONS = [
   { id: '12th-pass', label: '12th Pass', code: '12th Pass' },
   { id: 'graduation', label: 'Graduation', code: 'Graduation' },
   { id: 'btech', label: 'B.Tech', code: 'B.Tech' },
+  { id: 'mtech', label: 'M.Tech', code: 'M.Tech' },
+  { id: 'phd', label: 'PhD', code: 'PhD' },
   { id: 'mba', label: 'MBA', code: 'MBA' },
   { id: 'medical', label: 'Medical', code: 'Medical' },
   { id: 'iti', label: 'ITI', code: 'ITI' },

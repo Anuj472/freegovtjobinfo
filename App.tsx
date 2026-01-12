@@ -7,6 +7,8 @@ import JobTable from './components/JobTable';
 import JobDetail from './components/JobDetail';
 import { STATES, QUALIFICATIONS, CATEGORIES, SITE_NAME } from './constants';
 
+const CONTACT_EMAIL = "info.freegovtinfo@gmail.com";
+
 const StaticPage = ({ title, children, onBack }: { title: string, children?: React.ReactNode, onBack: () => void }) => (
   <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden animate-in fade-in duration-500 max-w-4xl mx-auto">
     <div className="bg-blue-950 px-8 py-5 text-white flex justify-between items-center border-b border-blue-800">
@@ -22,6 +24,43 @@ const StaticPage = ({ title, children, onBack }: { title: string, children?: Rea
       {children}
     </div>
   </div>
+);
+
+const SitemapPage = ({ onBack }: { onBack: () => void }) => (
+  <StaticPage title="Sitemap - Quick Navigation" onBack={onBack}>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div>
+        <h3 className="text-blue-900 font-black uppercase text-sm border-b-2 border-blue-100 pb-2 mb-4">States</h3>
+        <div className="flex flex-col gap-2">
+          {STATES.map(s => (
+            <a key={s.id} href={`/${s.id}`} className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase">
+              {s.label} Jobs
+            </a>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h3 className="text-blue-900 font-black uppercase text-sm border-b-2 border-blue-100 pb-2 mb-4">Qualifications</h3>
+        <div className="flex flex-col gap-2">
+          {QUALIFICATIONS.map(q => (
+            <a key={q.id} href={`/qualification/${q.id}`} className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase">
+              {q.label} Alerts
+            </a>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h3 className="text-blue-900 font-black uppercase text-sm border-b-2 border-blue-100 pb-2 mb-4">Sectors</h3>
+        <div className="flex flex-col gap-2">
+          {CATEGORIES.map(c => (
+            <a key={c.id} href={`/category/${c.id}`} className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase">
+              {c.label} Notifications
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </StaticPage>
 );
 
 const QuickLinkSection = ({ title, items, getHref }: { title: string, items: any[], getHref: (id: string) => string }) => (
@@ -65,7 +104,7 @@ const MobileTicker = () => (
 );
 
 function App() {
-  const [view, setView] = useState<PageType | 'ABOUT'>('HOME');
+  const [view, setView] = useState<PageType | 'ABOUT' | 'SITEMAP'>('HOME');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -77,7 +116,6 @@ function App() {
 
   const logoUrl = "https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY";
 
-  // Canonical Hostname Enforcement (SEO Audit requirement)
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.hostname.startsWith('www.')) {
         window.location.href = window.location.href.replace('www.', '');
@@ -157,6 +195,9 @@ function App() {
         } else if (path === '/trending') {
           setOnlyTrending(true); setView('HOME');
           updatePageMeta(`Trending Job Alerts 2025-26 - ${SITE_NAME}`, "Trending verified recruitment notifications for the current academic session.", "/trending");
+        } else if (path === '/sitemap') {
+          setView('SITEMAP');
+          updatePageMeta(`Sitemap - ${SITE_NAME}`, "Complete index of government jobs by state, qualification, and category.", "/sitemap");
         } else if (path === '/about-us') {
           setView('ABOUT');
           updatePageMeta(`About Our Verification Process - ${SITE_NAME}`, "Learn how FreeGovtJob.info manually verifies recruitment links to ensure safety and accuracy.", "/about-us");
@@ -259,10 +300,12 @@ function App() {
               <h3 className="text-lg font-black text-blue-900">100% Data Integrity</h3>
               <p>We do not collect personal identifiers. Our editorial desk manually cross-references 'Apply Now' links to ensure they match official department domains. If a link expires, we update it within 6 hours of an official amendment.</p>
               <h3 className="text-lg font-black text-blue-900">Correction Protocol</h3>
-              <p>Discovered an error? Reach out at <strong>contact@freegovtjob.info</strong> for priority editorial review.</p>
+              <p>Discovered an error? Reach out at <strong>{CONTACT_EMAIL}</strong> for priority editorial review.</p>
             </div>
           </StaticPage>
         );
+      case 'SITEMAP':
+        return <SitemapPage onBack={handleNavigateHome} />;
       default:
         return (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -310,10 +353,10 @@ function App() {
               <a href="/about-us" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/about-us'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">About Desk</a>
               <a href="/privacy-policy" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/privacy-policy'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">Editorial Policy</a>
               <a href="/sitemap" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/sitemap'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">Site Map</a>
-              <a href="/contact-us" className="hover:text-white transition-colors">Contact</a>
+              <a href="mailto:info.freegovtinfo@gmail.com" className="hover:text-white transition-colors">Contact</a>
             </nav>
             <div className="text-[9px] font-black uppercase tracking-[0.5em] text-blue-800 opacity-60">
-              © 2025-26 FREEGOVTJOB.INFO | SINCE 2024
+              © 2025-26 FREEGOVTJOB.INFO | {CONTACT_EMAIL}
             </div>
           </div>
         </div>

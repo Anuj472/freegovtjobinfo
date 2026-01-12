@@ -19,13 +19,14 @@ function transformBloggerPost(post: any): Job {
   const foundStates: string[] = [];
   const foundQuals: string[] = [];
   const foundCats: string[] = [];
-  let lastDate = "2026-12-31"; // Default fallback
+  let lastDate = "2026-12-31"; 
+  let postDate = post.published ? post.published.split('T')[0] : new Date().toISOString().split('T')[0];
 
   labels.forEach((l: string) => {
     if (!l) return;
     const lowerLabel = l.toLowerCase();
     
-    // Check for ddmmyyyy date label (exactly 8 digits)
+    // Check for ddmmyyyy date label (expiry/last date - exactly 8 digits)
     if (/^\d{8}$/.test(l)) {
       const day = l.substring(0, 2);
       const month = l.substring(2, 4);
@@ -33,42 +34,45 @@ function transformBloggerPost(post: any): Job {
       lastDate = `${year}-${month}-${day}`;
     }
 
+    // Check for postdateDDMMYYYY label (exactly 16 characters: postdate + 8 digits)
+    if (lowerLabel.startsWith('postdate') && lowerLabel.length === 16) {
+      const datePart = l.substring(8);
+      if (/^\d{8}$/.test(datePart)) {
+        const day = datePart.substring(0, 2);
+        const month = datePart.substring(2, 4);
+        const year = datePart.substring(4, 8);
+        postDate = `${year}-${month}-${day}`;
+      }
+    }
+
     const suffix = "-jobs";
     const lowerBase = lowerLabel.endsWith(suffix) 
       ? lowerLabel.substring(0, lowerLabel.length - suffix.length).trim() 
       : lowerLabel;
 
-    // Pattern: [Name]-Jobs (e.g., Haryana-Jobs, Graduate-Jobs, Police-Jobs)
     if (lowerLabel.endsWith(suffix)) {
       // Match States
-      const stateMatch = STATES.find(s => s.label.toLowerCase() === lowerBase);
+      const stateMatch = STATES.find(s => s.label.toLowerCase() === lowerBase || s.id === lowerBase);
       if (stateMatch) foundStates.push(stateMatch.id);
 
-      // Match Qualifications (Handle "Graduate" mapping to "Graduation")
+      // Match Qualifications
       const qualMatch = QUALIFICATIONS.find(q => 
         q.label.toLowerCase() === lowerBase || 
+        q.id === lowerBase ||
         (lowerBase === 'graduate' && q.id === 'graduation')
       );
       if (qualMatch) foundQuals.push(qualMatch.label);
 
       // Match Categories
-      const catMatch = CATEGORIES.find(c => c.label.toLowerCase() === lowerBase);
+      const catMatch = CATEGORIES.find(c => c.label.toLowerCase() === lowerBase || c.id === lowerBase);
       if (catMatch) foundCats.push(catMatch.label);
     }
 
-    // Special case direct matching
-    if (lowerBase === 'graduate' || lowerBase === 'graduation') {
-      foundQuals.push('Graduation');
-    }
+    // Special case direct matching for Graduate/MTech/PhD if used without suffix
+    if (lowerBase === 'graduate' || lowerBase === 'graduation') foundQuals.push('Graduation');
+    if (lowerBase === 'mtech') foundQuals.push('M.Tech');
+    if (lowerBase === 'phd') foundQuals.push('PhD');
   });
-
-  // If lastDate is still the default, try extracting from content via regex
-  if (lastDate === "2026-12-31" && content) {
-    const dateMatch = content.match(/(\d{1,2}[-/]\d{1,2}[-/]\d{4})|(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
-    if (dateMatch) {
-      lastDate = dateMatch[0];
-    }
-  }
 
   const slug = post.url 
     ? post.url.split('/').pop().replace('.html', '') 
@@ -85,6 +89,7 @@ function transformBloggerPost(post: any): Job {
     organization: organization,
     jobRole: jobRole,
     qualification: foundQuals.length > 0 ? Array.from(new Set(foundQuals)) : ["Check Detail"],
+    postDate: postDate,
     lastDate: lastDate,
     state: foundStates.length > 0 ? foundStates : ["all-india"],
     category: foundCats.length > 0 ? foundCats : ["General"],
@@ -113,7 +118,6 @@ export async function fetchJobs(): Promise<Job[]> {
     const data = await response.json();
     if (!data.items) return [];
 
-    // Filter to show only job posts
     const jobPosts = data.items.filter((post: any) => 
       post.labels?.some((l: string) => 
         l.toLowerCase() === 'latest-jobs' || 
@@ -136,6 +140,11 @@ export async function fetchJobs(): Promise<Job[]> {
 }
 
 export async function getJobBySlug(slug: string): Promise<Job | undefined> {
-  const allJobs = await fetchJobs();
-  return allJobs.find(j => j.slug === slug);
+  try {
+    const allJobs = await fetchJobs();
+    return allJobs.find(j => j.slug === slug);
+  } catch (error) {
+    console.error("getJobBySlug Error:", error);
+    return undefined;
+  }
 }
