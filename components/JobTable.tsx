@@ -10,9 +10,9 @@ interface JobTableProps {
 const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
   if (loading) {
     return (
-      <div className="w-full space-y-2">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="animate-pulse bg-white border border-gray-200 h-14 md:h-10 rounded-sm"></div>
+      <div className="w-full space-y-4">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="animate-pulse bg-white border border-gray-200 h-16 rounded-sm"></div>
         ))}
       </div>
     );
@@ -32,15 +32,14 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
         <table className="w-full text-left border-collapse table-fixed min-w-[650px]">
           <thead className="bg-gray-100 border-b border-gray-300">
             <tr>
-              <th className="px-3 py-4 text-[9px] font-black uppercase tracking-widest w-[45px] text-center border-r border-gray-200">#</th>
-              <th className="px-4 py-4 text-[9px] font-black uppercase tracking-widest border-r border-gray-200">Recruitment Alert</th>
-              <th className="px-3 py-4 text-[9px] font-black uppercase tracking-widest w-[130px] text-center border-r border-gray-200">Qualification</th>
-              <th className="px-3 py-4 text-[9px] font-black uppercase tracking-widest w-[120px] text-center border-r border-gray-200">Last Date</th>
-              <th className="px-3 py-4 text-[9px] font-black uppercase tracking-widest w-[80px] text-center">Detail</th>
+              <th className="px-4 py-5 text-[9px] font-black uppercase tracking-widest border-r border-gray-200">Recruitment Alert</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[140px] text-center border-r border-gray-200">Eligibility</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[130px] text-center border-r border-gray-200">Last Date</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[80px] text-center">Detail</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {jobs.map((job, idx) => {
+            {jobs.map((job) => {
               const lastDateObj = new Date(job.lastDate);
               const diffDays = Math.ceil((lastDateObj.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
               const isClosingSoon = diffDays > 0 && diffDays <= 5;
@@ -51,29 +50,31 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
                   className="hover:bg-blue-50/50 active:bg-blue-100 transition-colors group cursor-pointer"
                   onClick={() => onSelectJob(job.slug)}
                 >
-                  <td className="px-3 py-4 text-[11px] font-bold text-gray-400 text-center border-r border-gray-100 italic">{idx + 1}</td>
-                  <td className="px-4 py-4 border-r border-gray-100 min-w-0">
+                  <td className="px-4 py-6 border-r border-gray-100 min-w-0">
                     <div className="flex flex-col">
-                      <span className="text-[12px] font-bold text-blue-700 group-hover:underline underline-offset-4 decoration-2 truncate">
+                      <span className="text-[14px] font-bold text-blue-700 group-hover:underline underline-offset-4 decoration-2 leading-tight">
                         {job.organization}
                       </span>
-                      <span className="text-[10px] text-gray-600 font-medium truncate mt-0.5">
+                      <span className="text-[11px] text-gray-600 font-semibold mt-1">
                         {job.jobRole}
-                        {job.isLatest && <span className="text-[8px] font-black text-red-600 uppercase ml-2 animate-blink bg-red-50 border border-red-100 px-1 rounded inline-block">NEW</span>}
+                        {job.isLatest && <span className="text-[8px] font-black text-red-600 uppercase ml-2 animate-blink bg-red-50 border border-red-100 px-1.5 rounded-full inline-block">NEW</span>}
                       </span>
                     </div>
                   </td>
-                  <td className="px-3 py-4 text-center border-r border-gray-100">
-                    <span className="text-[10px] font-bold text-blue-800 uppercase bg-blue-50 px-2 py-1 rounded-sm truncate inline-block max-w-full">
+                  <td className="px-3 py-6 text-center border-r border-gray-100">
+                    <span className="text-[11px] font-bold text-blue-800 uppercase bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-sm inline-block max-w-full truncate">
                       {job.qualification[0] || 'Check'}
                     </span>
                   </td>
-                  <td className="px-3 py-4 whitespace-nowrap text-center border-r border-gray-100">
-                    <span className={`text-[10px] font-bold uppercase tracking-tight ${isClosingSoon ? 'text-red-600 font-black' : 'text-gray-700'}`}>
-                      {new Date(job.lastDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    </span>
+                  <td className="px-3 py-6 text-center border-r border-gray-100">
+                    <div className="flex flex-col items-center">
+                      <span className={`text-[11px] font-bold uppercase tracking-tight ${isClosingSoon ? 'text-red-600 font-black' : 'text-gray-700'}`}>
+                        {new Date(job.lastDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </span>
+                      {isClosingSoon && <span className="text-[8px] text-red-500 font-black uppercase tracking-tighter">Closing Soon!</span>}
+                    </div>
                   </td>
-                  <td className="px-3 py-4 text-center">
+                  <td className="px-3 py-6 text-center">
                     <svg className="w-5 h-5 mx-auto text-blue-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                     </svg>

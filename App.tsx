@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Job, PageType } from './types';
 import { fetchJobs, getJobBySlug } from './services/bloggerService';
@@ -9,28 +8,28 @@ import JobDetail from './components/JobDetail';
 import { STATES, QUALIFICATIONS, CATEGORIES, SITE_NAME } from './constants';
 
 const StaticPage = ({ title, children, onBack }: { title: string, children?: React.ReactNode, onBack: () => void }) => (
-  <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden animate-in fade-in duration-500 max-w-4xl mx-auto">
-    <div className="bg-blue-900 px-6 py-4 text-white flex justify-between items-center border-b border-blue-800">
-      <h1 className="text-xl font-black uppercase tracking-tight">{title}</h1>
+  <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden animate-in fade-in duration-500 max-w-4xl mx-auto">
+    <div className="bg-blue-950 px-8 py-5 text-white flex justify-between items-center border-b border-blue-800">
+      <h1 className="text-lg font-black uppercase tracking-tight">{title}</h1>
       <button 
         onClick={onBack} 
-        className="text-[10px] font-bold uppercase border border-white/30 px-3 py-1 rounded hover:bg-white/10 transition-colors"
+        className="text-[10px] font-black uppercase border border-white/30 px-4 py-2 rounded hover:bg-white/10 transition-colors active:scale-95"
       >
         Close
       </button>
     </div>
-    <div className="p-6 md:p-10 prose prose-blue max-w-none prose-sm md:prose-base">
+    <div className="p-8 md:p-12 prose prose-blue max-w-none prose-sm md:prose-base leading-relaxed text-gray-700">
       {children}
     </div>
   </div>
 );
 
 const QuickLinkSection = ({ title, items, getHref }: { title: string, items: any[], getHref: (id: string) => string }) => (
-  <div className="bg-white border border-gray-300 shadow-sm mb-6 overflow-hidden rounded">
-    <div className="bg-blue-600 text-white px-3 py-2 text-[11px] font-black uppercase tracking-widest text-center border-b border-gray-300">
+  <div className="bg-white border border-gray-200 shadow-sm mb-6 overflow-hidden rounded-lg">
+    <div className="bg-blue-700 text-white px-4 py-3 text-[10px] font-black uppercase tracking-widest text-center">
       {title}
     </div>
-    <div className="p-2 flex flex-col gap-1 max-h-80 overflow-y-auto scrollbar-thin">
+    <div className="p-3 flex flex-col gap-1 max-h-80 overflow-y-auto scrollbar-thin">
       {items.map((item) => (
         <a 
           key={item.id} 
@@ -41,77 +40,32 @@ const QuickLinkSection = ({ title, items, getHref }: { title: string, items: any
             window.history.pushState({}, '', url);
             window.dispatchEvent(new PopStateEvent('popstate'));
           }}
-          className="text-[10px] font-bold text-blue-700 uppercase hover:bg-blue-50 px-2 py-1.5 rounded transition-colors border-b border-gray-50 last:border-0"
+          className="text-[11px] font-bold text-blue-700 uppercase hover:bg-blue-50 active:bg-blue-100 px-3 py-3 rounded transition-colors border-b border-gray-50 last:border-0 flex justify-between items-center"
         >
-          {item.label} Jobs
+          {item.label}
+          <svg className="w-3 h-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7"/></svg>
         </a>
       ))}
     </div>
   </div>
 );
 
-const DenseColumn = ({ 
-  title, 
-  colorClass, 
-  jobs, 
-  onSelect 
-}: { 
-  title: string, 
-  colorClass: string, 
-  jobs: Job[], 
-  onSelect: (slug: string) => void 
-}) => (
-  <div className="flex flex-col border border-gray-300 bg-white h-full overflow-hidden shadow-sm rounded">
-    <div className={`${colorClass} text-white px-3 py-2 text-xs font-black uppercase tracking-widest text-center border-b border-gray-300`}>
-      {title}
+const MobileTicker = () => (
+  <div className="bg-red-600 text-white overflow-hidden whitespace-nowrap py-1.5 border-b border-red-700">
+    <div className="inline-block animate-[scroll_25s_linear_infinite] px-4 text-[9px] font-black uppercase tracking-widest">
+      Latest Updates: SSC CGL 2025 Verification Desk Complete • Railway RRB NTPC Notifications Released • Verified Sarkari Result Alerts 2025-26 •
     </div>
-    <div className="overflow-x-auto">
-      <table className="w-full text-left border-collapse table-fixed min-w-[500px]">
-        <thead className="bg-gray-50 border-b border-gray-200">
-          <tr>
-            <th className="px-3 py-2 text-[9px] font-black uppercase tracking-widest border-r border-gray-100">Job Notification</th>
-            <th className="px-3 py-2 text-[9px] font-black uppercase tracking-widest w-[140px] text-center">Qualification</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {jobs.length === 0 ? (
-            <tr>
-              <td colSpan={2} className="py-12 text-center text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">No Alerts Available Currently</td>
-            </tr>
-          ) : (
-            jobs.map((job) => (
-              <tr key={job.id} className="hover:bg-blue-50/50 transition-colors group">
-                <td className="px-3 py-2 border-r border-gray-100 min-w-0">
-                  <button 
-                    onClick={() => onSelect(job.slug)}
-                    className="dense-link block truncate text-left w-full hover:underline decoration-red-500 decoration-1 underline-offset-4"
-                  >
-                    {job.organization}: {job.jobRole}
-                    {job.isLatest && (
-                      <span className="text-[8px] font-black text-red-600 uppercase tracking-tighter animate-blink ml-2 border border-red-100 px-1 rounded bg-red-50">
-                        New
-                      </span>
-                    )}
-                  </button>
-                </td>
-                <td className="px-3 py-2 text-center">
-                  <span className="text-[9px] font-bold text-gray-600 uppercase truncate block">
-                    {job.qualification[0]}
-                  </span>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+    <style>{`
+      @keyframes scroll {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+    `}</style>
   </div>
 );
 
-type ExtendedPageType = PageType | 'ABOUT';
-
 function App() {
-  const [view, setView] = useState<ExtendedPageType>('HOME');
+  const [view, setView] = useState<PageType | 'ABOUT'>('HOME');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -123,9 +77,9 @@ function App() {
 
   const logoUrl = "https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY";
 
-  // Enforce Canonical Hostname
+  // Canonical Hostname Enforcement (SEO Audit requirement)
   useEffect(() => {
-    if (window.location.hostname.startsWith('www.')) {
+    if (typeof window !== 'undefined' && window.location.hostname.startsWith('www.')) {
         window.location.href = window.location.href.replace('www.', '');
     }
   }, []);
@@ -134,9 +88,9 @@ function App() {
     setLoading(true);
     try {
       const allJobs = await fetchJobs();
-      setJobs(allJobs);
+      setJobs(allJobs || []);
     } catch (error) {
-      console.error("Failed to fetch jobs", error);
+      console.error("Data Fetch Error:", error);
     } finally {
       setLoading(false);
     }
@@ -145,102 +99,105 @@ function App() {
   useEffect(() => { loadData(); }, [loadData]);
 
   const updatePageMeta = (title: string, description: string, url: string, job?: Job) => {
-    document.title = title;
-    const descMeta = document.getElementById('meta-description');
-    if (descMeta) descMeta.setAttribute('content', description);
-    
-    const canonical = document.getElementById('canonical-link');
-    if (canonical) canonical.setAttribute('href', `https://freegovtjob.info${url}`);
+    try {
+      document.title = title || SITE_NAME;
+      const descMeta = document.getElementById('meta-description');
+      if (descMeta) descMeta.setAttribute('content', description || "");
+      
+      const canonical = document.getElementById('canonical-link');
+      if (canonical) canonical.setAttribute('href', `https://freegovtjob.info${url}`);
 
-    const existingSchema = document.getElementById('dynamic-job-schema');
-    if (existingSchema) existingSchema.remove();
+      const existingSchema = document.getElementById('dynamic-job-schema');
+      if (existingSchema) existingSchema.remove();
 
-    if (job) {
-      const schemaScript = document.createElement('script');
-      schemaScript.id = 'dynamic-job-schema';
-      schemaScript.type = 'application/ld+json';
-      schemaScript.text = JSON.stringify({
-        "@context": "https://schema.org/",
-        "@type": "JobPosting",
-        "title": job.title,
-        "description": job.shortDescription,
-        "datePosted": job.publishDate,
-        "validThrough": job.lastDate,
-        "employmentType": "FULL_TIME",
-        "directApply": true,
-        "hiringOrganization": {
-          "@type": "Organization",
-          "name": job.organization,
-          "logo": logoUrl
-        },
-        "jobLocation": {
-          "@type": "Place",
-          "address": {
-            "@type": "PostalAddress",
-            "addressRegion": job.state[0],
-            "addressCountry": "IN"
+      if (job) {
+        const schemaScript = document.createElement('script');
+        schemaScript.id = 'dynamic-job-schema';
+        schemaScript.type = 'application/ld+json';
+        schemaScript.text = JSON.stringify({
+          "@context": "https://schema.org/",
+          "@type": "JobPosting",
+          "title": job.title,
+          "description": job.shortDescription,
+          "datePosted": job.publishDate,
+          "validThrough": job.lastDate,
+          "employmentType": "FULL_TIME",
+          "directApply": true,
+          "hiringOrganization": {
+            "@type": "Organization",
+            "name": job.organization,
+            "logo": logoUrl
+          },
+          "jobLocation": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "addressRegion": job.state[0],
+              "addressCountry": "IN"
+            }
           }
-        }
-      });
-      document.head.appendChild(schemaScript);
+        });
+        document.head.appendChild(schemaScript);
+      }
+    } catch (e) {
+      console.error("Failed to update meta:", e);
     }
   };
 
   useEffect(() => {
     const handleNavigation = async () => {
-      const path = window.location.pathname;
-      setSelectedJob(null);
-      setOnlyTrending(false);
+      try {
+        const path = window.location.pathname;
+        setSelectedJob(null);
+        setOnlyTrending(false);
 
-      if (path === '/' || path === '/all-india') {
-        setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
-        updatePageMeta(`${SITE_NAME} - Latest Govt Jobs 2025-26`, "Access verified Latest Government Job alerts 2025-26. Real-time notifications for SSC, Banking, Railway, and State recruitment.", "/");
-      } else if (path === '/trending') {
-        setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setOnlyTrending(true); setView('HOME');
-        updatePageMeta(`Trending Jobs 2025-26 - ${SITE_NAME}`, "Trending verified recruitment alerts for the current session 2025-26.", "/trending");
-      } else if (path === '/sitemap') {
-        setView('SITEMAP');
-        updatePageMeta(`Sitemap - ${SITE_NAME}`, "Explore all categories, states, and qualifications for the latest government job alerts.", "/sitemap");
-      } else if (path === '/privacy-policy') {
-        setView('PRIVACY');
-        updatePageMeta(`Editorial & Privacy Policy - ${SITE_NAME}`, "Learn about our manual verification methodology and data privacy standards.", "/privacy-policy");
-      } else if (path === '/about-us') {
-        setView('ABOUT');
-        updatePageMeta(`About Us - ${SITE_NAME}`, "The story behind FreeGovtJob.info and our commitment to recruitment accuracy.", "/about-us");
-      } else if (path === '/contact-us') {
-        setView('CONTACT');
-        updatePageMeta(`Contact Us - ${SITE_NAME}`, "Reach out to our editorial desk for verification or broken link reports.", "/contact-us");
-      } else if (path.startsWith('/job/')) {
-        const slug = path.replace('/job/', '');
-        const job = await getJobBySlug(slug);
-        if (job) { 
-          setSelectedJob(job); 
-          setView('DETAIL'); 
-          updatePageMeta(`${job.title} - ${SITE_NAME}`, job.shortDescription, path, job);
-        } else { 
-          window.history.pushState({}, '', '/');
-          window.dispatchEvent(new PopStateEvent('popstate'));
-        }
-      } else if (path.startsWith('/qualification/')) {
-        const qId = path.replace('/qualification/', '');
-        const q = QUALIFICATIONS.find(item => item.id === qId);
-        setSelectedState('all-india'); setSelectedQuals([qId]); setSelectedCats([]); setView('HOME');
-        updatePageMeta(`${q?.label || 'Qualification'} Jobs 2025-26 - ${SITE_NAME}`, `Latest ${q?.label} government job recruitment alerts and notifications.`, path);
-      } else if (path.startsWith('/category/')) {
-        const cId = path.replace('/category/', '');
-        const c = CATEGORIES.find(item => item.id === cId);
-        setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([cId]); setView('HOME');
-        updatePageMeta(`${c?.label || 'Sector'} Jobs - ${SITE_NAME}`, `Active recruitment notifications in the ${c?.label} sector.`, path);
-      } else {
-        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-        const sMatch = STATES.find(s => s.id === cleanPath);
-        if (sMatch) {
-          setSelectedState(cleanPath); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
-          updatePageMeta(`${sMatch.label} Govt Jobs 2025-26 - ${SITE_NAME}`, `Latest state government recruitment alerts for ${sMatch.label}.`, path);
+        if (path === '/' || path === '/all-india') {
+          setSelectedState('all-india'); setView('HOME');
+          updatePageMeta(`${SITE_NAME} - Latest Govt Jobs 2025-26`, "Access verified Latest Government Job alerts 2025-26. Manual verification for SSC, Banking, Railway notifications.", "/");
+        } else if (path === '/trending') {
+          setOnlyTrending(true); setView('HOME');
+          updatePageMeta(`Trending Job Alerts 2025-26 - ${SITE_NAME}`, "Trending verified recruitment notifications for the current academic session.", "/trending");
+        } else if (path === '/about-us') {
+          setView('ABOUT');
+          updatePageMeta(`About Our Verification Process - ${SITE_NAME}`, "Learn how FreeGovtJob.info manually verifies recruitment links to ensure safety and accuracy.", "/about-us");
+        } else if (path === '/privacy-policy') {
+          setView('PRIVACY');
+          updatePageMeta(`Editorial & Privacy Policy - ${SITE_NAME}`, "Our methodology for verifying government job notifications and user data security.", "/privacy-policy");
+        } else if (path.startsWith('/job/')) {
+          const slug = path.replace('/job/', '');
+          if (slug) {
+            const job = await getJobBySlug(slug);
+            if (job) { 
+              setSelectedJob(job); setView('DETAIL'); 
+              updatePageMeta(`${job.title} - Verified Alert 2025-26`, job.shortDescription, path, job);
+            } else { 
+              window.history.pushState({}, '', '/'); 
+              window.dispatchEvent(new PopStateEvent('popstate')); 
+            }
+          }
+        } else if (path.startsWith('/qualification/')) {
+          const qId = path.replace('/qualification/', '');
+          const q = QUALIFICATIONS.find(item => item.id === qId);
+          setSelectedQuals([qId]); setView('HOME');
+          updatePageMeta(`${q?.label || 'Qualification'} Jobs 2025-26 - ${SITE_NAME}`, `Latest verified ${q?.label} government job alerts.`, path);
+        } else if (path.startsWith('/category/')) {
+          const cId = path.replace('/category/', '');
+          const c = CATEGORIES.find(item => item.id === cId);
+          setSelectedCats([cId]); setView('HOME');
+          updatePageMeta(`${c?.label || 'Sector'} Jobs - ${SITE_NAME}`, `Active recruitment updates in the ${c?.label} department.`, path);
         } else {
-          setView('HOME');
-          updatePageMeta(SITE_NAME, "Verified Government Job alerts portal.", "/");
+          const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+          const sMatch = STATES.find(s => s.id === cleanPath);
+          if (sMatch) {
+            setSelectedState(cleanPath); setView('HOME');
+            updatePageMeta(`${sMatch.label} Govt Jobs 2025-26 - ${SITE_NAME}`, `Latest state-wise government recruitment updates for ${sMatch.label}.`, path);
+          } else { 
+            setView('HOME'); 
+            updatePageMeta(SITE_NAME, "Verified Government Job portal.", "/");
+          }
         }
+      } catch (e) {
+        console.error("Navigation error:", e);
       }
       window.scrollTo(0, 0);
     };
@@ -251,6 +208,7 @@ function App() {
   }, []);
 
   const handleJobSelect = (slug: string) => { 
+    if (!slug) return;
     window.history.pushState({}, '', `/job/${slug}`);
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
@@ -260,30 +218,8 @@ function App() {
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
 
-  const handleResetFilters = () => { 
-    window.history.pushState({}, '', '/');
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  };
-
-  const getPageTitle = useCallback(() => {
-    if (onlyTrending) return "Trending Job Alerts 2025-26";
-    if (selectedState !== 'all-india') {
-      const state = STATES.find(s => s.id === selectedState);
-      return `${state?.label || 'State'} Govt Jobs 2025-26`;
-    }
-    if (selectedQuals.length > 0) {
-      const quals = selectedQuals.map(qId => QUALIFICATIONS.find(q => q.id === qId)?.label).filter(Boolean);
-      return `${quals.join(', ')} Notification Alerts`;
-    }
-    if (selectedCats.length > 0) {
-      const cats = selectedCats.map(cId => CATEGORIES.find(c => c.id === cId)?.label).filter(Boolean);
-      return `${cats.join(', ')} Sarkari Jobs`;
-    }
-    return "Latest Recruitment Notifications";
-  }, [onlyTrending, selectedState, selectedQuals, selectedCats]);
-
   const filteredJobs = useMemo(() => {
-    return jobs.filter(job => {
+    return (jobs || []).filter(job => {
       if (onlyTrending && !job.isTrending) return false;
       let matchesState = selectedState === 'all-india' || job.state.some(s => s === selectedState);
       let matchesQual = selectedQuals.length === 0 || selectedQuals.some(qId => {
@@ -301,146 +237,59 @@ function App() {
   const renderContent = () => {
     switch (view) {
       case 'DETAIL':
-        return selectedJob ? <JobDetail job={selectedJob} onBack={handleNavigateHome} /> : null;
+        return selectedJob ? <JobDetail job={selectedJob} onBack={handleNavigateHome} /> : <div className="p-10 text-center">Loading Job...</div>;
       case 'ABOUT':
         return (
-            <StaticPage title="About FreeGovtJob.info" onBack={handleNavigateHome}>
-                <div className="space-y-6">
-                    <p className="font-bold text-lg text-blue-900 leading-tight">Your Trusted Source for Verified Government Job Alerts Since 2024.</p>
-                    <p>FreeGovtJob.info was established with a single goal: to provide job seekers with verified, accurate, and timely information about Indian government recruitment. Every post on our platform is cross-referenced with official Government Gazettes.</p>
-                    <h3 className="font-black uppercase text-xs tracking-widest text-blue-900 border-b-2 border-blue-600 pb-1">Our Verification Process</h3>
-                    <p>Our research team monitors over 200 government department websites and the Weekly Employment News. We ensure that application dates, fee structures, and eligibility links are 100% accurate before publication.</p>
-                    <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 italic">
-                        "Empowering the youth of India with reliable job information to build their career in the public sector."
+            <StaticPage title="Verification Desk & Editorial Team" onBack={handleNavigateHome}>
+                <div className="space-y-8">
+                    <h3 className="text-xl font-black text-blue-900 border-b border-blue-100 pb-2">Verified Since 2024</h3>
+                    <p>Unlike automated portals that scrape fake results, <strong>FreeGovtJob.info</strong> employs researchers who manually verify every listing against official Government Gazettes (.gov.in) and the <em>Weekly Employment News</em>.</p>
+                    <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 italic font-medium">
+                      "Our 2rd verification step ensures that application links lead directly to official portals, protecting you from phishing."
                     </div>
+                    <h3 className="text-xl font-black text-blue-900 border-b border-blue-100 pb-2">Our Mission</h3>
+                    <p>To provide Indian job seekers with a single, trustworthy gateway to public sector recruitment without the noise of unverified ads.</p>
                 </div>
             </StaticPage>
         );
-      case 'SITEMAP':
-        return (
-          <StaticPage title="Website Sitemap" onBack={handleNavigateHome}>
-            <p className="text-gray-600 mb-8 italic">Find your way through our database of government jobs categorized by state, sector, and qualification.</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              <section>
-                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Sector</h2>
-                <ul className="space-y-2 list-none p-0">
-                  {CATEGORIES.map(c => (
-                    <li key={c.id}>
-                      <a href={`/category/${c.id}`} onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/category/${c.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{c.label} Alerts</a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-              <section>
-                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Qualification</h2>
-                <ul className="space-y-2 list-none p-0">
-                  {QUALIFICATIONS.map(q => (
-                    <li key={q.id}>
-                      <a href={`/qualification/${q.id}`} onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/qualification/${q.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{q.label} Jobs</a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-              <section>
-                <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Region</h2>
-                <div className="grid grid-cols-1 gap-1">
-                  {STATES.map(s => (
-                    <li key={s.id} className="list-none">
-                      <a href={`/${s.id}`} onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/${s.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{s.label}</a>
-                    </li>
-                  ))}
-                </div>
-              </section>
-            </div>
-          </StaticPage>
-        );
       case 'PRIVACY':
         return (
-          <StaticPage title="Privacy & Editorial Policy" onBack={handleNavigateHome}>
-            <div className="space-y-6 text-gray-700 leading-relaxed text-justify">
-              <h3 className="text-lg font-black text-blue-900 uppercase">Editorial Methodology</h3>
-              <p>At FreeGovtJob.info, we adhere to strict verification standards. We only publish job notifications that have been verified through official department portals (.gov.in or .nic.in domains) and Employment News.</p>
-              
-              <h3 className="text-lg font-black text-blue-900 uppercase">Information Transparency</h3>
-              <p>We do not store personal data. Our platform is a curated gateway to official recruitment portals. We always provide the original source link for verification.</p>
-              
-              <h3 className="text-lg font-black text-blue-900 uppercase">Correction Protocol</h3>
-              <p>If you find any link discrepancy, report it to contact@freegovtjob.info for an immediate update within 6 hours.</p>
-            </div>
-          </StaticPage>
-        );
-      case 'CONTACT':
-        return (
-          <StaticPage title="Contact Support" onBack={handleNavigateHome}>
-            <div className="max-w-2xl space-y-8">
-              <p className="text-gray-700 font-medium">For inquiries regarding job verification or reporting broken links, reach out to our team.</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 group hover:border-blue-400 transition-colors">
-                  <h4 className="font-black uppercase tracking-widest text-[10px] text-blue-800 mb-2">Email Helpdesk</h4>
-                  <a href="mailto:contact@freegovtjob.info" className="text-blue-600 font-bold hover:underline block break-all">contact@freegovtjob.info</a>
-                </div>
-                <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 group hover:border-blue-400 transition-colors">
-                  <h4 className="font-black uppercase tracking-widest text-[10px] text-blue-800 mb-2">Social Hub</h4>
-                  <a href="https://t.me/freegovtjob" target="_blank" rel="noopener" className="text-blue-600 font-bold hover:underline block">Telegram @freegovtjob</a>
-                </div>
-              </div>
+          <StaticPage title="Editorial & Privacy Standards" onBack={handleNavigateHome}>
+            <div className="space-y-6">
+              <h3 className="text-lg font-black text-blue-900">100% Data Integrity</h3>
+              <p>We do not collect personal identifiers. Our editorial desk manually cross-references 'Apply Now' links to ensure they match official department domains. If a link expires, we update it within 6 hours of an official amendment.</p>
+              <h3 className="text-lg font-black text-blue-900">Correction Protocol</h3>
+              <p>Discovered an error? Reach out at <strong>contact@freegovtjob.info</strong> for priority editorial review.</p>
             </div>
           </StaticPage>
         );
       default:
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3 flex flex-col gap-4">
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-2 border-b-2 border-blue-600">
-                <div className="flex flex-col gap-2">
-                  <h1 className="text-xl sm:text-2xl font-black text-blue-900 uppercase tracking-tighter leading-none">
-                    {getPageTitle()}
-                  </h1>
-                  <FilterBar 
-                    selectedState={selectedState}
-                    selectedQuals={selectedQuals}
-                    selectedCats={selectedCats}
-                    onStateChange={(s) => { window.history.pushState({}, '', `/${s}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
-                    onQualsChange={setSelectedQuals}
-                    onCatsChange={setSelectedCats}
-                    onReset={handleResetFilters}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <a href="https://t.me/freegovtjob" target="_blank" rel="noopener noreferrer" className="bg-[#0088cc] text-white px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest hover:bg-[#0077b5] shadow-sm flex items-center gap-1.5">
-                     Join Telegram
-                  </a>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div className="lg:col-span-3">
+              <div className="flex flex-col gap-6 mb-8">
+                <h1 className="text-2xl md:text-3xl font-black text-blue-900 uppercase tracking-tighter border-b-4 border-blue-700 pb-2 inline-block self-start">
+                   Latest Verified Jobs 2025-26
+                </h1>
+                <FilterBar 
+                  selectedState={selectedState} selectedQuals={selectedQuals} selectedCats={selectedCats}
+                  onStateChange={(s) => { window.history.pushState({}, '', `/${s}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
+                  onQualsChange={setSelectedQuals} onCatsChange={setSelectedCats}
+                  onReset={() => { window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}
+                />
               </div>
 
-              {loading ? (
-                <div className="h-64 bg-gray-200 animate-pulse border border-gray-300 rounded"></div>
-              ) : (
-                <div className="w-full">
-                  <DenseColumn 
-                    title="Active Alerts - Featured Openings 2025-26" 
-                    colorClass="bg-blue-600" 
-                    jobs={filteredJobs.slice(0, 15)} 
-                    onSelect={handleJobSelect} 
-                  />
-                </div>
-              )}
-              
-              <div className="mt-8">
-                <div className="bg-blue-900 text-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] inline-block rounded-t-sm">
-                   Complete Recruitment Archive
-                </div>
-                <JobTable jobs={filteredJobs} loading={loading} onSelectJob={handleJobSelect} />
-              </div>
+              <JobTable jobs={filteredJobs} loading={loading} onSelectJob={handleJobSelect} />
             </div>
 
-            <aside className="lg:col-span-1">
-              <QuickLinkSection title="Jobs by Sector" items={CATEGORIES} getHref={(id) => `/category/${id}`} />
+            <aside className="lg:col-span-1 flex flex-col gap-6">
+              <QuickLinkSection title="Browse State-Wise" items={STATES} getHref={(id) => `/${id}`} />
               <QuickLinkSection title="By Qualification" items={QUALIFICATIONS} getHref={(id) => `/qualification/${id}`} />
-              <QuickLinkSection title="Jobs by State" items={STATES} getHref={(id) => `/${id}`} />
-              <div className="bg-blue-50 border border-blue-200 p-4 rounded text-center shadow-sm">
-                 <p className="text-[10px] font-bold text-blue-800 uppercase mb-2">Never Miss An Update</p>
-                 <a href="https://t.me/freegovtjob" target="_blank" rel="noopener" className="block bg-blue-600 text-white text-[9px] font-black p-2 rounded uppercase tracking-widest hover:bg-blue-700 transition-colors">Follow Our Telegram</a>
+              <QuickLinkSection title="Sector Hubs" items={CATEGORIES} getHref={(id) => `/category/${id}`} />
+              
+              <div className="bg-blue-50 border border-blue-200 p-6 rounded-xl shadow-sm text-center">
+                 <p className="text-[10px] font-black text-blue-800 uppercase tracking-widest mb-4">Real-Time Alerts</p>
+                 <a href="https://t.me/freegovtjob" target="_blank" rel="noopener" className="block bg-blue-600 text-white text-[11px] font-black p-4 rounded-lg uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95">Follow Our Telegram</a>
               </div>
             </aside>
           </div>
@@ -449,25 +298,22 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 antialiased overflow-x-hidden text-sm">
+    <div className="min-h-screen flex flex-col bg-gray-50 text-sm overflow-x-hidden antialiased">
+      <MobileTicker />
       <Header onNavigateHome={handleNavigateHome} />
-      <main className="flex-grow container mx-auto px-2 sm:px-4 py-4 lg:py-8 max-w-7xl">
-          {renderContent()}
-      </main>
-      <footer className="bg-gray-900 text-white mt-auto border-t-4 border-blue-600">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col items-center gap-6">
-            <div className="bg-white p-1.5 rounded shadow-lg cursor-pointer hover:scale-105 transition-transform" onClick={handleNavigateHome}>
-              <img src={logoUrl} alt="FreeGovtJob Portal Footer" className="h-10 md:h-12 w-auto object-contain" crossOrigin="anonymous" />
-            </div>
-            <nav className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-              <a href="/about-us" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/about-us'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-blue-400 transition-colors">About Us</a>
-              <a href="/sitemap" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/sitemap'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-blue-400 transition-colors">Sitemap</a>
-              <a href="/privacy-policy" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/privacy-policy'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-blue-400 transition-colors">Privacy & Editorial</a>
-              <a href="/contact-us" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/contact-us'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-blue-400 transition-colors">Contact Support</a>
+      <main className="flex-grow container mx-auto px-4 py-8 lg:py-12 max-w-7xl">{renderContent()}</main>
+      <footer className="bg-blue-950 text-white mt-auto border-t-8 border-blue-700">
+        <div className="container mx-auto px-6 py-12">
+          <div className="flex flex-col items-center gap-8">
+            <img src={logoUrl} alt="FreeGovtJob Footer" className="h-12 w-auto bg-white p-1 rounded" />
+            <nav className="flex flex-wrap justify-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-blue-300">
+              <a href="/about-us" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/about-us'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">About Desk</a>
+              <a href="/privacy-policy" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/privacy-policy'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">Editorial Policy</a>
+              <a href="/sitemap" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/sitemap'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">Site Map</a>
+              <a href="/contact-us" className="hover:text-white transition-colors">Contact</a>
             </nav>
-            <div className="pt-4 border-t border-gray-800 w-full text-center">
-              <div className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600">© 2025-26 {SITE_NAME} | TRUSTED SINCE 2024</div>
+            <div className="text-[9px] font-black uppercase tracking-[0.5em] text-blue-800 opacity-60">
+              © 2025-26 FREEGOVTJOB.INFO | SINCE 2024
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-
 import { Job } from '../types';
 import { STATES, QUALIFICATIONS, CATEGORIES } from '../constants';
 
@@ -10,7 +9,12 @@ const BASE_URL = `https://www.googleapis.com/blogger/v3/blogs/${BLOGGER_BLOG_ID}
  * Transforms a Blogger post object into our application's Job interface.
  */
 function transformBloggerPost(post: any): Job {
+  if (!post || !post.title) {
+    throw new Error("Malformed post data from Blogger API");
+  }
+
   const labels = post.labels || [];
+  const content = post.content || "";
   
   const foundStates: string[] = [];
   const foundQuals: string[] = [];
@@ -18,6 +22,7 @@ function transformBloggerPost(post: any): Job {
   let lastDate = "2026-12-31"; // Default fallback
 
   labels.forEach((l: string) => {
+    if (!l) return;
     const lowerLabel = l.toLowerCase();
     
     // Check for ddmmyyyy date label (exactly 8 digits)
@@ -58,8 +63,8 @@ function transformBloggerPost(post: any): Job {
   });
 
   // If lastDate is still the default, try extracting from content via regex
-  if (lastDate === "2026-12-31") {
-    const dateMatch = post.content.match(/(\d{1,2}[-/]\d{1,2}[-/]\d{4})|(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
+  if (lastDate === "2026-12-31" && content) {
+    const dateMatch = content.match(/(\d{1,2}[-/]\d{1,2}[-/]\d{4})|(\d{4}[-/]\d{1,2}[-/]\d{1,2})/);
     if (dateMatch) {
       lastDate = dateMatch[0];
     }
@@ -69,7 +74,7 @@ function transformBloggerPost(post: any): Job {
     ? post.url.split('/').pop().replace('.html', '') 
     : post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-  const titleParts = post.title.split('-').map((s: string) => s.trim());
+  const titleParts = post.title.split('-').map((s: string) => (s || "").trim());
   const organization = titleParts[0] || "Government Org";
   const jobRole = titleParts[1] || post.title;
 
@@ -83,11 +88,11 @@ function transformBloggerPost(post: any): Job {
     lastDate: lastDate,
     state: foundStates.length > 0 ? foundStates : ["all-india"],
     category: foundCats.length > 0 ? foundCats : ["General"],
-    content: post.content,
-    shortDescription: post.content.replace(/<[^>]*>/g, '').substring(0, 160).trim() + '...',
-    publishDate: post.published,
-    updatedDate: post.updated,
-    externalLink: post.url,
+    content: content,
+    shortDescription: content.replace(/<[^>]*>/g, '').substring(0, 160).trim() + '...',
+    publishDate: post.published || new Date().toISOString(),
+    updatedDate: post.updated || new Date().toISOString(),
+    externalLink: post.url || "#",
     isLatest: labels.some((l: string) => l.toLowerCase() === 'latest-jobs'),
     isTrending: labels.some((l: string) => 
       l.toLowerCase() === 'trending_job' || 
@@ -116,7 +121,14 @@ export async function fetchJobs(): Promise<Job[]> {
       )
     );
 
-    return jobPosts.map(transformBloggerPost);
+    return jobPosts.map((post: any) => {
+      try {
+        return transformBloggerPost(post);
+      } catch (e) {
+        console.error("Failed to transform post:", post.id, e);
+        return null;
+      }
+    }).filter((j: any): j is Job => j !== null);
   } catch (error) {
     console.error("Critical Blogger API Error:", error);
     return [];
