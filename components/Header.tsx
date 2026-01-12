@@ -20,7 +20,6 @@ const Header: React.FC<HeaderProps> = ({
             src={logoUrl} 
             alt="FreeGovtJob.info" 
             className="h-12 md:h-20 w-auto object-contain"
-            crossOrigin="anonymous"
           />
         </div>
         

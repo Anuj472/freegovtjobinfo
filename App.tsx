@@ -33,7 +33,12 @@ const SitemapPage = ({ onBack }: { onBack: () => void }) => (
         <h3 className="text-blue-900 font-black uppercase text-sm border-b-2 border-blue-100 pb-2 mb-4">States</h3>
         <div className="flex flex-col gap-2">
           {STATES.map(s => (
-            <a key={s.id} href={`/${s.id}`} className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase">
+            <a 
+              key={s.id} 
+              href={`/${s.id}`} 
+              onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/${s.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
+              className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase"
+            >
               {s.label} Jobs
             </a>
           ))}
@@ -43,7 +48,12 @@ const SitemapPage = ({ onBack }: { onBack: () => void }) => (
         <h3 className="text-blue-900 font-black uppercase text-sm border-b-2 border-blue-100 pb-2 mb-4">Qualifications</h3>
         <div className="flex flex-col gap-2">
           {QUALIFICATIONS.map(q => (
-            <a key={q.id} href={`/qualification/${q.id}`} className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase">
+            <a 
+              key={q.id} 
+              href={`/qualification/${q.id}`} 
+              onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/qualification/${q.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
+              className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase"
+            >
               {q.label} Alerts
             </a>
           ))}
@@ -53,7 +63,12 @@ const SitemapPage = ({ onBack }: { onBack: () => void }) => (
         <h3 className="text-blue-900 font-black uppercase text-sm border-b-2 border-blue-100 pb-2 mb-4">Sectors</h3>
         <div className="flex flex-col gap-2">
           {CATEGORIES.map(c => (
-            <a key={c.id} href={`/category/${c.id}`} className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase">
+            <a 
+              key={c.id} 
+              href={`/category/${c.id}`} 
+              onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/category/${c.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
+              className="text-[11px] font-bold text-gray-600 hover:text-blue-600 uppercase"
+            >
               {c.label} Notifications
             </a>
           ))}
@@ -286,7 +301,7 @@ function App() {
                     <h3 className="text-xl font-black text-blue-900 border-b border-blue-100 pb-2">Verified Since 2024</h3>
                     <p>Unlike automated portals that scrape fake results, <strong>FreeGovtJob.info</strong> employs researchers who manually verify every listing against official Government Gazettes (.gov.in) and the <em>Weekly Employment News</em>.</p>
                     <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 italic font-medium">
-                      "Our 2rd verification step ensures that application links lead directly to official portals, protecting you from phishing."
+                      "Our verification step ensures that application links lead directly to official portals, protecting you from phishing."
                     </div>
                     <h3 className="text-xl font-black text-blue-900 border-b border-blue-100 pb-2">Our Mission</h3>
                     <p>To provide Indian job seekers with a single, trustworthy gateway to public sector recruitment without the noise of unverified ads.</p>
@@ -353,7 +368,7 @@ function App() {
               <a href="/about-us" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/about-us'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">About Desk</a>
               <a href="/privacy-policy" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/privacy-policy'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">Editorial Policy</a>
               <a href="/sitemap" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/sitemap'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-white transition-colors">Site Map</a>
-              <a href="mailto:info.freegovtinfo@gmail.com" className="hover:text-white transition-colors">Contact</a>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white transition-colors">Contact</a>
             </nav>
             <div className="text-[9px] font-black uppercase tracking-[0.5em] text-blue-800 opacity-60">
               © 2025-26 FREEGOVTJOB.INFO | {CONTACT_EMAIL}

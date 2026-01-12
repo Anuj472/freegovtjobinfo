@@ -42,7 +42,7 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
           <thead className="bg-gray-100 border-b border-gray-300">
             <tr>
               <th className="px-4 py-5 text-[9px] font-black uppercase tracking-widest border-r border-gray-200">Recruitment Alert</th>
-              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[120px] text-center border-r border-gray-200">Eligibility</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[140px] text-center border-r border-gray-200">Eligibility</th>
               <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[110px] text-center border-r border-gray-200">Post Date</th>
               <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[110px] text-center border-r border-gray-200">Last Date</th>
               <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[70px] text-center">Detail</th>
@@ -75,9 +75,19 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
                     </div>
                   </td>
                   <td className="px-3 py-6 text-center border-r border-gray-100">
-                    <span className="text-[10px] font-bold text-blue-800 uppercase bg-blue-50 border border-blue-100 px-2 py-1.5 rounded-sm inline-block max-w-full truncate">
-                      {job.qualification[0] || 'Check'}
-                    </span>
+                    <div className="flex flex-wrap justify-center gap-1">
+                      {job.qualification.length > 0 ? (
+                        job.qualification.map((q, idx) => (
+                          <span key={idx} className="text-[9px] font-black text-blue-800 uppercase bg-blue-50 border border-blue-100 px-1.5 py-1 rounded-sm inline-block">
+                            {q}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[9px] font-black text-gray-400 uppercase bg-gray-50 border border-gray-100 px-1.5 py-1 rounded-sm inline-block">
+                          Check Detail
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-3 py-6 text-center border-r border-gray-100">
                     <span className="text-[11px] font-bold text-gray-500 uppercase tracking-tight">
