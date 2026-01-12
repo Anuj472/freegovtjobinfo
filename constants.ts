@@ -1,9 +1,9 @@
 
 export const SITE_NAME = "FreeGovtJob.info";
+export const SITE_BRANDING = "Latest Govt Jobs 2025-26";
 
 export const STATES = [
   { id: 'all-india', label: 'All India', code: 'All India' },
-  // States
   { id: 'andhra-pradesh', label: 'Andhra Pradesh', code: 'Andhra Pradesh' },
   { id: 'arunachal-pradesh', label: 'Arunachal Pradesh', code: 'Arunachal Pradesh' },
   { id: 'assam', label: 'Assam', code: 'Assam' },
@@ -32,15 +32,8 @@ export const STATES = [
   { id: 'uttar-pradesh', label: 'Uttar Pradesh', code: 'Uttar Pradesh' },
   { id: 'uttarakhand', label: 'Uttarakhand', code: 'Uttarakhand' },
   { id: 'west-bengal', label: 'West Bengal', code: 'West Bengal' },
-  // Union Territories
-  { id: 'andaman-and-nicobar', label: 'Andaman and Nicobar', code: 'Andaman and Nicobar' },
-  { id: 'chandigarh', label: 'Chandigarh', code: 'Chandigarh' },
-  { id: 'dadra-and-nagar-haveli', label: 'Dadra and Nagar Haveli', code: 'Dadra and Nagar Haveli' },
-  { id: 'daman-and-diu', label: 'Daman and Diu', code: 'Daman and Diu' },
   { id: 'delhi', label: 'Delhi', code: 'Delhi' },
   { id: 'jammu-and-kashmir', label: 'Jammu and Kashmir', code: 'Jammu and Kashmir' },
-  { id: 'ladakh', label: 'Ladakh', code: 'Ladakh' },
-  { id: 'lakshadweep', label: 'Lakshadweep', code: 'Lakshadweep' },
   { id: 'puducherry', label: 'Puducherry', code: 'Puducherry' },
 ];
 
