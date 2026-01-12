@@ -8,13 +8,13 @@
     <!-- Primary Meta Tags -->
     <title>FreeGovtJob.info - Latest Govt Jobs 2025 | Sarkari Result & Job Alerts</title>
     <meta name="title" content="FreeGovtJob.info - Latest Govt Jobs 2025 | Sarkari Result & Job Alerts">
-    <meta name="description" content="Access FreeGovtJob.info for latest Government Jobs 2025. Get daily Sarkari job alerts for SSC, Banking, Railway, Police, and State Govt recruitment. Filter jobs by 10th pass, 12th pass, and Graduation.">
+    <meta id="meta-description" name="description" content="Access FreeGovtJob.info for latest Government Jobs 2025. Get daily Sarkari job alerts for SSC, Banking, Railway, Police, and State Govt recruitment. Filter jobs by 10th pass, 12th pass, and Graduation.">
     <meta name="keywords" content="govt jobs, sarkari result, free job alert, 10th pass jobs, 12th pass jobs, latest recruitment 2025, railway jobs, bank jobs, freegovtjob, ssc alerts, sarkari naukri, upsc notifications">
     <meta name="author" content="FreeGovtJob.info">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://freegovtjob.info/" />
+    <link id="canonical-link" rel="canonical" href="https://freegovtjob.info/" />
 
-    <!-- Structured Data (JSON-LD) for SEO -->
+    <!-- Structured Data (JSON-LD) for Site Identity -->
     <script type="application/ld+json">
     [
       {
@@ -34,83 +34,31 @@
         "name": "FreeGovtJob.info",
         "url": "https://freegovtjob.info/",
         "logo": "https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY",
-        "description": "Premium portal for latest government job alerts and recruitment notifications in India.",
-        "sameAs": [
-          "https://t.me/freegovtjob"
-        ]
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://freegovtjob.info/"
-        },{
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Latest Jobs",
-          "item": "https://freegovtjob.info/trending"
-        }]
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "contact@freegovtjob.info",
+          "contactType": "customer service"
+        }
       }
     ]
     </script>
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="en_IN">
-    <meta property="og:url" content="https://freegovtjob.info/">
-    <meta property="og:title" content="FreeGovtJob.info - Latest Govt Jobs 2025">
-    <meta property="og:description" content="Get instant alerts for all Central and State Government job openings. Verified recruitment notifications for all qualifications.">
-    <meta property="og:image" content="https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://freegovtjob.info/">
-    <meta property="twitter:title" content="FreeGovtJob.info - Latest Govt Jobs 2025">
-    <meta property="twitter:description" content="Get instant alerts for all Central and State Government job openings. Verified recruitment notifications for all qualifications.">
-    <meta property="twitter:image" content="https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        .animate-blink {
-            animation: blink 1s infinite;
-        }
-        .dense-link {
-            font-size: 0.85rem;
-            line-height: 1.25rem;
-            color: #1d4ed8;
-            font-weight: 600;
-        }
-        .dense-link:hover {
-            color: #b91c1c;
-            text-decoration: underline;
-        }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+        .animate-blink { animation: blink 1s infinite; }
+        .dense-link { font-size: 0.85rem; line-height: 1.25rem; color: #1d4ed8; font-weight: 600; }
+        .dense-link:hover { color: #b91c1c; text-decoration: underline; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Hide SEO content from users but keep it for bots */
-        .seo-pre-render {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border: 0;
-        }
+        /* Skeleton styling for pre-render content */
+        #root:empty { display: block; }
+        .loading-skeleton { padding: 20px; max-width: 1200px; margin: 0 auto; }
     </style>
 <script type="importmap">
 {
@@ -126,43 +74,42 @@
 </head>
 <body class="bg-gray-100 text-gray-900">
     <div id="root">
-        <!-- Static Content for SEO Bots (CSR Fallback) -->
-        <article class="seo-pre-render">
-            <h1>FreeGovtJob.info - Official Government Job Alerts 2025</h1>
-            <p>Welcome to FreeGovtJob.info, the leading recruitment portal for latest government job alerts, Sarkari Results, and recruitment notifications across India. We provide verified daily updates for central and state government jobs.</p>
+        <!-- Semantic Pre-render Content (Visible to bots and users until JS loads) -->
+        <div class="loading-skeleton">
+            <header style="border-bottom: 2px solid #1e3a8a; padding-bottom: 10px; margin-bottom: 20px;">
+                <h1 style="color: #1e3a8a; font-size: 24px; font-weight: 900;">FreeGovtJob.info - Official Job Alerts 2025</h1>
+                <p>Loading the latest Sarkari Result and Government Job notifications...</p>
+            </header>
             
-            <section>
-                <h2>Trending Govt Job Sectors</h2>
-                <ul>
-                    <li><strong>SSC Jobs 2025:</strong> CGL, CHSL, MTS, and GD Constable recruitment alerts.</li>
-                    <li><strong>Railway Jobs (RRB):</strong> Latest NTPC, Group D, and ALP vacancy notifications.</li>
-                    <li><strong>Banking Sector:</strong> IBPS PO, Clerk, SBI Recruitment, and RBI Assistant jobs.</li>
-                    <li><strong>Defense & Police:</strong> Indian Army, Navy, Air Force, and State Police Constable/SI recruitment.</li>
-                    <li><strong>Teaching Jobs:</strong> CTET, State TET, KVS, NVS, and University Lecturer openings.</li>
-                </ul>
-            </section>
+            <main>
+                <article>
+                    <h2>Premium Government Recruitment Portal</h2>
+                    <p>FreeGovtJob.info provides real-time updates for Central and State Government vacancies. We specialize in SSC, Railway, Banking, Police, and Defense recruitment alerts.</p>
+                    
+                    <h3>Browse Jobs by Sector</h3>
+                    <ul>
+                        <li>SSC (CGL, CHSL, MTS, GD)</li>
+                        <li>Railway (RRB NTPC, Group D, ALP)</li>
+                        <li>Banking (SBI, IBPS PO, Clerk)</li>
+                        <li>Police & Defense (Constable, SI, Army)</li>
+                    </ul>
 
-            <section>
-                <h2>Sarkari Jobs by Qualification</h2>
-                <h3>10th & 12th Pass Govt Jobs</h3>
-                <p>Find thousands of opportunities for 10th pass and 12th pass candidates in various departments like Post Office, MTS, and State Police.</p>
-                <h3>Graduate & Engineering Jobs</h3>
-                <p>Latest recruitment for BA, BSc, BCom, BTech, and Medical graduates in UPSC, PSC, and PSU sectors.</p>
-            </section>
+                    <h3>Browse Jobs by Qualification</h3>
+                    <ul>
+                        <li>10th Pass Govt Jobs 2025</li>
+                        <li>12th Pass Recruitment Alerts</li>
+                        <li>Graduate & Engineering Jobs</li>
+                    </ul>
+                </article>
+            </main>
 
-            <section>
-                <h2>State-Wise Recruitment Alerts</h2>
-                <p>Explore jobs in Andhra Pradesh, Bihar, Delhi, Gujarat, Haryana, Karnataka, Kerala, Madhya Pradesh, Maharashtra, Punjab, Rajasthan, Tamil Nadu, Uttar Pradesh, and West Bengal.</p>
-            </section>
-
-            <footer>
+            <footer style="margin-top: 40px; font-size: 12px; color: #666;">
+                <p>&copy; 2025 FreeGovtJob.info. All recruitment links are verified against official notifications.</p>
                 <nav>
-                    <a href="https://freegovtjob.info/sitemap">Sitemap</a>
-                    <a href="https://freegovtjob.info/privacy-policy">Privacy Policy</a>
-                    <a href="https://freegovtjob.info/contact-us">Contact Us</a>
+                    <a href="/sitemap">Sitemap</a> | <a href="/privacy-policy">Privacy Policy</a> | <a href="/contact-us">Contact Us</a>
                 </nav>
             </footer>
-        </article>
+        </div>
     </div>
     <script type="module" src="/index.tsx"></script>
 </body>

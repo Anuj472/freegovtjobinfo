@@ -135,6 +135,49 @@ function App() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  // Dynamic Metadata and Schema Helper
+  const updatePageMeta = (title: string, description: string, url: string, job?: Job) => {
+    document.title = title;
+    const descMeta = document.getElementById('meta-description');
+    if (descMeta) descMeta.setAttribute('content', description);
+    
+    const canonical = document.getElementById('canonical-link');
+    if (canonical) canonical.setAttribute('href', `https://freegovtjob.info${url}`);
+
+    // Inject JobPosting Schema if it's a job detail page
+    const existingSchema = document.getElementById('dynamic-job-schema');
+    if (existingSchema) existingSchema.remove();
+
+    if (job) {
+      const schemaScript = document.createElement('script');
+      schemaScript.id = 'dynamic-job-schema';
+      schemaScript.type = 'application/ld+json';
+      schemaScript.text = JSON.stringify({
+        "@context": "https://schema.org/",
+        "@type": "JobPosting",
+        "title": job.title,
+        "description": job.shortDescription,
+        "datePosted": job.publishDate,
+        "validThrough": job.lastDate,
+        "employmentType": "FULL_TIME",
+        "hiringOrganization": {
+          "@type": "Organization",
+          "name": job.organization,
+          "logo": logoUrl
+        },
+        "jobLocation": {
+          "@type": "Place",
+          "address": {
+            "@type": "PostalAddress",
+            "addressRegion": job.state[0],
+            "addressCountry": "IN"
+          }
+        }
+      });
+      document.head.appendChild(schemaScript);
+    }
+  };
+
   useEffect(() => {
     const handleNavigation = async () => {
       const path = window.location.pathname;
@@ -143,28 +186,27 @@ function App() {
 
       if (path === '/' || path === '/all-india') {
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
-        document.title = `${SITE_NAME} - Latest Govt Jobs 2025`;
+        updatePageMeta(`${SITE_NAME} - Latest Govt Jobs 2025`, "Latest Government Job alerts and recruitment notifications in India for all qualifications.", "/");
       } else if (path === '/trending') {
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setOnlyTrending(true); setView('HOME');
-        document.title = `Trending Jobs 2025 - ${SITE_NAME}`;
+        updatePageMeta(`Trending Jobs 2025 - ${SITE_NAME}`, "Check out verified trending recruitment alerts for 2025.", "/trending");
       } else if (path === '/sitemap') {
         setView('SITEMAP');
-        document.title = `Website Sitemap - ${SITE_NAME}`;
+        updatePageMeta(`Website Sitemap - ${SITE_NAME}`, "Complete navigation of all job categories and state-wise recruitment notifications.", "/sitemap");
       } else if (path === '/privacy-policy') {
         setView('PRIVACY');
-        document.title = `Privacy Policy - ${SITE_NAME}`;
+        updatePageMeta(`Privacy & Editorial Policy - ${SITE_NAME}`, "Our commitment to data privacy and verified job information delivery.", "/privacy-policy");
       } else if (path === '/contact-us') {
         setView('CONTACT');
-        document.title = `Contact Us - ${SITE_NAME}`;
+        updatePageMeta(`Contact Us - ${SITE_NAME}`, "Get in touch for support regarding job alerts or reporting broken links.", "/contact-us");
       } else if (path.startsWith('/job/')) {
         const slug = path.replace('/job/', '');
         const job = await getJobBySlug(slug);
         if (job) { 
           setSelectedJob(job); 
           setView('DETAIL'); 
-          document.title = `${job.title} - ${SITE_NAME}`;
-        }
-        else { 
+          updatePageMeta(`${job.title} - ${SITE_NAME}`, job.shortDescription, path, job);
+        } else { 
           window.history.pushState({}, '', '/');
           window.dispatchEvent(new PopStateEvent('popstate'));
         }
@@ -172,21 +214,21 @@ function App() {
         const qId = path.replace('/qualification/', '');
         const q = QUALIFICATIONS.find(item => item.id === qId);
         setSelectedState('all-india'); setSelectedQuals([qId]); setSelectedCats([]); setView('HOME');
-        document.title = `${q?.label || 'Qualification'} Govt Jobs 2025 - ${SITE_NAME}`;
+        updatePageMeta(`${q?.label || 'Qualification'} Jobs 2025 - ${SITE_NAME}`, `Find latest ${q?.label} government jobs in India.`, path);
       } else if (path.startsWith('/category/')) {
         const cId = path.replace('/category/', '');
         const c = CATEGORIES.find(item => item.id === cId);
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([cId]); setView('HOME');
-        document.title = `${c?.label || 'Sector'} Job Notifications - ${SITE_NAME}`;
+        updatePageMeta(`${c?.label || 'Sector'} Jobs - ${SITE_NAME}`, `Browse latest recruitment alerts in the ${c?.label} sector.`, path);
       } else {
         const cleanPath = path.startsWith('/') ? path.substring(1) : path;
         const sMatch = STATES.find(s => s.id === cleanPath);
         if (sMatch) {
           setSelectedState(cleanPath); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
-          document.title = `${sMatch.label} Govt Jobs 2025 - ${SITE_NAME}`;
+          updatePageMeta(`${sMatch.label} Govt Jobs 2025 - ${SITE_NAME}`, `Latest Sarkari Naukri notifications for ${sMatch.label} state.`, path);
         } else {
           setView('HOME');
-          document.title = SITE_NAME;
+          updatePageMeta(SITE_NAME, "Official Government Job alerts portal.", "/");
         }
       }
       window.scrollTo(0, 0);
@@ -307,15 +349,21 @@ function App() {
         );
       case 'PRIVACY':
         return (
-          <StaticPage title="Privacy Policy" onBack={handleNavigateHome}>
+          <StaticPage title="Privacy & Editorial Policy" onBack={handleNavigateHome}>
             <div className="space-y-6 text-gray-700 leading-relaxed text-justify">
-              <p>Welcome to <strong>{SITE_NAME}</strong>. We value your privacy and are committed to protecting it. This policy outlines how we handle data on our platform.</p>
+              <p>Welcome to <strong>{SITE_NAME}</strong>. We value your privacy and are committed to protecting it. This policy outlines how we handle data and verify information on our platform.</p>
+              
+              <h3 className="text-lg font-black text-blue-900 uppercase">Verification Policy (E-E-A-T)</h3>
+              <p>Every job alert published on FreeGovtJob.info is manually verified against official government notifications. We do not publish unverified or rumored vacancies. Our team cross-checks dates, eligibility, and links directly with official department portals.</p>
+
               <h3 className="text-lg font-black text-blue-900 uppercase">Information Security</h3>
               <p>We do not collect personal identifiable information (PII) like names or addresses. We only track anonymous visit data to improve site performance and relevancy of job alerts.</p>
+              
               <h3 className="text-lg font-black text-blue-900 uppercase">External Official Links</h3>
               <p>Our job detail pages link directly to official Government Department websites. Users are encouraged to verify information on the official portals before applying.</p>
-              <h3 className="text-lg font-black text-blue-900 uppercase">Updates</h3>
-              <p>This policy may be updated from time to time. Please check back regularly to stay informed.</p>
+              
+              <h3 className="text-lg font-black text-blue-900 uppercase">Correction Policy</h3>
+              <p>If you find any discrepancy in our job listings, please contact our helpdesk immediately at contact@freegovtjob.info for a prompt correction.</p>
             </div>
           </StaticPage>
         );
