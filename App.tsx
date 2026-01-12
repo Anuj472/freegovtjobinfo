@@ -8,7 +8,8 @@ import JobTable from './components/JobTable';
 import JobDetail from './components/JobDetail';
 import { STATES, QUALIFICATIONS, CATEGORIES, SITE_NAME } from './constants';
 
-const StaticPage = ({ title, children, onBack }: { title: string, children: React.ReactNode, onBack: () => void }) => (
+// Fixed the type definition to make children optional, which helps with some TS versions when passing children as nested JSX.
+const StaticPage = ({ title, children, onBack }: { title: string, children?: React.ReactNode, onBack: () => void }) => (
   <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden animate-in fade-in duration-500 max-w-4xl mx-auto">
     <div className="bg-blue-900 px-6 py-4 text-white flex justify-between items-center border-b border-blue-800">
       <h1 className="text-xl font-black uppercase tracking-tight">{title}</h1>
