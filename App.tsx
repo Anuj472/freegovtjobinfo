@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Job, PageType } from './types';
 import { fetchJobs, getJobBySlug } from './services/bloggerService';
@@ -8,6 +9,13 @@ import JobDetail from './components/JobDetail';
 import { STATES, QUALIFICATIONS, CATEGORIES, SITE_NAME } from './constants';
 
 const CONTACT_EMAIL = "info.freegovtinfo@gmail.com";
+
+interface AppProps {
+  initialData?: {
+    jobs: Job[];
+    selectedJob?: Job;
+  };
+}
 
 const StaticPage = ({ title, children, onBack }: { title: string, children?: React.ReactNode, onBack: () => void }) => (
   <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden animate-in fade-in duration-500 max-w-4xl mx-auto">
@@ -118,11 +126,11 @@ const MobileTicker = () => (
   </div>
 );
 
-function App() {
-  const [view, setView] = useState<PageType | 'ABOUT' | 'SITEMAP'>('HOME');
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+function App({ initialData }: AppProps) {
+  const [view, setView] = useState<PageType | 'ABOUT' | 'SITEMAP' | 'PRIVACY'>('HOME');
+  const [jobs, setJobs] = useState<Job[]>(initialData?.jobs || []);
+  const [loading, setLoading] = useState(!initialData?.jobs);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(initialData?.selectedJob || null);
   
   const [selectedState, setSelectedState] = useState<string>('all-india');
   const [selectedQuals, setSelectedQuals] = useState<string[]>([]);
@@ -138,6 +146,9 @@ function App() {
   }, []);
 
   const loadData = useCallback(async () => {
+    // If we have initial data, we already have jobs. Only fetch if missing.
+    if (jobs.length > 0) return;
+    
     setLoading(true);
     try {
       const allJobs = await fetchJobs();
@@ -147,11 +158,14 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [jobs.length]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => { 
+    loadData(); 
+  }, [loadData]);
 
   const updatePageMeta = (title: string, description: string, url: string, job?: Job) => {
+    if (typeof document === 'undefined') return;
     try {
       document.title = title || SITE_NAME;
       const descMeta = document.getElementById('meta-description');
@@ -222,7 +236,11 @@ function App() {
         } else if (path.startsWith('/job/')) {
           const slug = path.replace('/job/', '');
           if (slug) {
-            const job = await getJobBySlug(slug);
+            // Check if we already have the job in our list to avoid an API call
+            let job = jobs.find(j => j.slug === slug);
+            if (!job) {
+              job = await getJobBySlug(slug);
+            }
             if (job) { 
               setSelectedJob(job); setView('DETAIL'); 
               updatePageMeta(`${job.title} - Verified Alert 2025-26`, job.shortDescription, path, job);
@@ -261,7 +279,7 @@ function App() {
     window.addEventListener('popstate', handleNavigation);
     handleNavigation();
     return () => window.removeEventListener('popstate', handleNavigation);
-  }, []);
+  }, [jobs]);
 
   const handleJobSelect = (slug: string) => { 
     if (!slug) return;
@@ -293,7 +311,7 @@ function App() {
   const renderContent = () => {
     switch (view) {
       case 'DETAIL':
-        return selectedJob ? <JobDetail job={selectedJob} onBack={handleNavigateHome} /> : <div className="p-10 text-center">Loading Job...</div>;
+        return selectedJob ? <JobDetail job={selectedJob} onBack={handleNavigateHome} /> : <div className="p-10 text-center">Loading Job Details...</div>;
       case 'ABOUT':
         return (
             <StaticPage title="Verification Desk & Editorial Team" onBack={handleNavigateHome}>

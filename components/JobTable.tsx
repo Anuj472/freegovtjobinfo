@@ -26,11 +26,8 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
     );
   }
 
-  // Handle local navigation to prevent full page reload on normal left click
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
-    // If user is doing Ctrl+Click, Cmd+Click, or Middle-Click, let the browser handle it
     if (e.ctrlKey || e.metaKey || e.button === 1) return;
-    
     e.preventDefault();
     onSelectJob(slug);
   };
@@ -42,7 +39,7 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
           <thead className="bg-gray-100 border-b border-gray-300">
             <tr>
               <th className="px-4 py-5 text-[9px] font-black uppercase tracking-widest border-r border-gray-200">Recruitment Alert</th>
-              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[140px] text-center border-r border-gray-200">Eligibility</th>
+              <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[180px] text-center border-r border-gray-200">Eligibility</th>
               <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[110px] text-center border-r border-gray-200">Post Date</th>
               <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[110px] text-center border-r border-gray-200">Last Date</th>
               <th className="px-3 py-5 text-[9px] font-black uppercase tracking-widest w-[70px] text-center">Detail</th>
@@ -75,18 +72,12 @@ const JobTable: React.FC<JobTableProps> = ({ jobs, loading, onSelectJob }) => {
                     </div>
                   </td>
                   <td className="px-3 py-6 text-center border-r border-gray-100">
-                    <div className="flex flex-wrap justify-center gap-1">
-                      {job.qualification.length > 0 ? (
-                        job.qualification.map((q, idx) => (
-                          <span key={idx} className="text-[9px] font-black text-blue-800 uppercase bg-blue-50 border border-blue-100 px-1.5 py-1 rounded-sm inline-block">
-                            {q}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-[9px] font-black text-gray-400 uppercase bg-gray-50 border border-gray-100 px-1.5 py-1 rounded-sm inline-block">
-                          Check Detail
+                    <div className="flex flex-wrap justify-center gap-1.5">
+                      {job.qualification.map((q, idx) => (
+                        <span key={idx} className="text-[9px] font-black text-blue-900 uppercase bg-blue-100/50 border border-blue-200 px-2 py-1 rounded-sm">
+                          {q}
                         </span>
-                      )}
+                      ))}
                     </div>
                   </td>
                   <td className="px-3 py-6 text-center border-r border-gray-100">

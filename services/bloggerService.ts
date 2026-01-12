@@ -24,7 +24,7 @@ function transformBloggerPost(post: any): Job {
 
   labels.forEach((l: string) => {
     if (!l) return;
-    const lowerLabel = l.toLowerCase();
+    const lowerLabel = l.toLowerCase().trim();
     
     // Check for ddmmyyyy date label (expiry/last date - exactly 8 digits)
     if (/^\d{8}$/.test(l)) {
@@ -46,32 +46,43 @@ function transformBloggerPost(post: any): Job {
     }
 
     const suffix = "-jobs";
-    const lowerBase = lowerLabel.endsWith(suffix) 
-      ? lowerLabel.substring(0, lowerLabel.length - suffix.length).trim() 
-      : lowerLabel;
-
+    // Check for "-jobs" suffix and extract base
     if (lowerLabel.endsWith(suffix)) {
+      const lowerBase = lowerLabel.substring(0, lowerLabel.length - suffix.length).trim();
+
       // Match States
       const stateMatch = STATES.find(s => s.label.toLowerCase() === lowerBase || s.id === lowerBase);
       if (stateMatch) foundStates.push(stateMatch.id);
 
-      // Match Qualifications
-      const qualMatch = QUALIFICATIONS.find(q => 
-        q.label.toLowerCase() === lowerBase || 
-        q.id === lowerBase ||
-        (lowerBase === 'graduate' && q.id === 'graduation')
-      );
-      if (qualMatch) foundQuals.push(qualMatch.label);
+      // Match Qualifications (Improved Post Graduate detection)
+      const isPostGrad = lowerBase === 'post graduate' || 
+                         lowerBase === 'post-graduate' || 
+                         lowerBase === 'postgraduate' ||
+                         lowerBase === 'post grduate'; // Handle potential typo
+
+      if (isPostGrad) {
+        foundQuals.push('Post Graduate');
+      } else {
+        const qualMatch = QUALIFICATIONS.find(q => 
+          q.label.toLowerCase() === lowerBase || 
+          q.id === lowerBase ||
+          (lowerBase === 'graduate' && q.id === 'graduation')
+        );
+        if (qualMatch) foundQuals.push(qualMatch.label);
+      }
 
       // Match Categories
       const catMatch = CATEGORIES.find(c => c.label.toLowerCase() === lowerBase || c.id === lowerBase);
       if (catMatch) foundCats.push(catMatch.label);
     }
 
-    // Special case direct matching for Graduate/MTech/PhD if used without suffix
-    if (lowerBase === 'graduate' || lowerBase === 'graduation') foundQuals.push('Graduation');
-    if (lowerBase === 'mtech') foundQuals.push('M.Tech');
-    if (lowerBase === 'phd') foundQuals.push('PhD');
+    // Direct string matching for labels without "-jobs" suffix
+    if (lowerLabel === 'graduate' || lowerLabel === 'graduation') foundQuals.push('Graduation');
+    if (lowerLabel === 'post graduate' || lowerLabel === 'post-graduate' || lowerLabel === 'postgraduate') {
+        foundQuals.push('Post Graduate');
+    }
+    if (lowerLabel === 'mtech') foundQuals.push('M.Tech');
+    if (lowerLabel === 'phd') foundQuals.push('PhD');
   });
 
   const slug = post.url 
@@ -108,9 +119,15 @@ function transformBloggerPost(post: any): Job {
   };
 }
 
+/**
+ * Fetches jobs from Blogger API.
+ * Uses cache-busting and filters for valid recruitment posts.
+ */
 export async function fetchJobs(): Promise<Job[]> {
   try {
-    const response = await fetch(`${BASE_URL}/posts?key=${BLOGGER_API_KEY}&maxResults=500&fetchImages=true&_cb=${Date.now()}`);
+    const url = `${BASE_URL}/posts?key=${BLOGGER_API_KEY}&maxResults=500&fetchImages=true&_cb=${Date.now()}`;
+    const response = await fetch(url);
+    
     if (!response.ok) {
       throw new Error(`Blogger API returned ${response.status}`);
     }
@@ -139,6 +156,9 @@ export async function fetchJobs(): Promise<Job[]> {
   }
 }
 
+/**
+ * Gets a specific job by its slug.
+ */
 export async function getJobBySlug(slug: string): Promise<Job | undefined> {
   try {
     const allJobs = await fetchJobs();
