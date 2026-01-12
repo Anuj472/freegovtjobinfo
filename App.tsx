@@ -8,7 +8,6 @@ import JobTable from './components/JobTable';
 import JobDetail from './components/JobDetail';
 import { STATES, QUALIFICATIONS, CATEGORIES, SITE_NAME } from './constants';
 
-// Fixed the type definition to make children optional, which helps with some TS versions when passing children as nested JSX.
 const StaticPage = ({ title, children, onBack }: { title: string, children?: React.ReactNode, onBack: () => void }) => (
   <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden animate-in fade-in duration-500 max-w-4xl mx-auto">
     <div className="bg-blue-900 px-6 py-4 text-white flex justify-between items-center border-b border-blue-800">
@@ -35,7 +34,13 @@ const QuickLinkSection = ({ title, items, getHref }: { title: string, items: any
       {items.map((item) => (
         <a 
           key={item.id} 
-          href={item.id === 'all-india' ? '#/' : getHref(item.id)}
+          href={item.id === 'all-india' ? '/' : getHref(item.id)}
+          onClick={(e) => {
+            e.preventDefault();
+            const url = item.id === 'all-india' ? '/' : getHref(item.id);
+            window.history.pushState({}, '', url);
+            window.dispatchEvent(new PopStateEvent('popstate'));
+          }}
           className="text-[10px] font-bold text-blue-700 uppercase hover:bg-blue-50 px-2 py-1.5 rounded transition-colors border-b border-gray-50 last:border-0"
         >
           {item.label} Jobs
@@ -114,7 +119,6 @@ function App() {
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
   const [onlyTrending, setOnlyTrending] = useState(false);
 
-  // Reliable Google Drive image delivery link
   const logoUrl = "https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY";
 
   const loadData = useCallback(async () => {
@@ -131,52 +135,54 @@ function App() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  // SEO & Routing
   useEffect(() => {
-    const handleHashChange = async () => {
-      const hash = window.location.hash.replace('#', '');
+    const handleNavigation = async () => {
+      const path = window.location.pathname;
       setSelectedJob(null);
       setOnlyTrending(false);
 
-      if (!hash || hash === '/' || hash === '/all-india') {
+      if (path === '/' || path === '/all-india') {
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
         document.title = `${SITE_NAME} - Latest Govt Jobs 2025`;
-      } else if (hash === '/trending') {
+      } else if (path === '/trending') {
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([]); setOnlyTrending(true); setView('HOME');
         document.title = `Trending Jobs 2025 - ${SITE_NAME}`;
-      } else if (hash === '/sitemap') {
+      } else if (path === '/sitemap') {
         setView('SITEMAP');
         document.title = `Website Sitemap - ${SITE_NAME}`;
-      } else if (hash === '/privacy-policy') {
+      } else if (path === '/privacy-policy') {
         setView('PRIVACY');
         document.title = `Privacy Policy - ${SITE_NAME}`;
-      } else if (hash === '/contact-us') {
+      } else if (path === '/contact-us') {
         setView('CONTACT');
         document.title = `Contact Us - ${SITE_NAME}`;
-      } else if (hash.startsWith('/job/')) {
-        const slug = hash.replace('/job/', '');
+      } else if (path.startsWith('/job/')) {
+        const slug = path.replace('/job/', '');
         const job = await getJobBySlug(slug);
         if (job) { 
           setSelectedJob(job); 
           setView('DETAIL'); 
           document.title = `${job.title} - ${SITE_NAME}`;
         }
-        else { window.location.hash = '/'; }
-      } else if (hash.startsWith('/qualification/')) {
-        const qId = hash.replace('/qualification/', '');
+        else { 
+          window.history.pushState({}, '', '/');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
+      } else if (path.startsWith('/qualification/')) {
+        const qId = path.replace('/qualification/', '');
         const q = QUALIFICATIONS.find(item => item.id === qId);
         setSelectedState('all-india'); setSelectedQuals([qId]); setSelectedCats([]); setView('HOME');
         document.title = `${q?.label || 'Qualification'} Govt Jobs 2025 - ${SITE_NAME}`;
-      } else if (hash.startsWith('/category/')) {
-        const cId = hash.replace('/category/', '');
+      } else if (path.startsWith('/category/')) {
+        const cId = path.replace('/category/', '');
         const c = CATEGORIES.find(item => item.id === cId);
         setSelectedState('all-india'); setSelectedQuals([]); setSelectedCats([cId]); setView('HOME');
         document.title = `${c?.label || 'Sector'} Job Notifications - ${SITE_NAME}`;
       } else {
-        const cleanHash = hash.startsWith('/') ? hash.substring(1) : hash;
-        const sMatch = STATES.find(s => s.id === cleanHash);
+        const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+        const sMatch = STATES.find(s => s.id === cleanPath);
         if (sMatch) {
-          setSelectedState(cleanHash); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
+          setSelectedState(cleanPath); setSelectedQuals([]); setSelectedCats([]); setView('HOME');
           document.title = `${sMatch.label} Govt Jobs 2025 - ${SITE_NAME}`;
         } else {
           setView('HOME');
@@ -185,14 +191,26 @@ function App() {
       }
       window.scrollTo(0, 0);
     };
-    window.addEventListener('hashchange', handleHashChange);
-    handleHashChange();
-    return () => window.removeEventListener('hashchange', handleHashChange);
+
+    window.addEventListener('popstate', handleNavigation);
+    handleNavigation();
+    return () => window.removeEventListener('popstate', handleNavigation);
   }, []);
 
-  const handleJobSelect = (slug: string) => { window.location.hash = `/job/${slug}`; };
-  const handleNavigateHome = () => { window.location.hash = '/'; };
-  const handleResetFilters = () => { window.location.hash = '/'; };
+  const handleJobSelect = (slug: string) => { 
+    window.history.pushState({}, '', `/job/${slug}`);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  const handleNavigateHome = () => { 
+    window.history.pushState({}, '', '/');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  const handleResetFilters = () => { 
+    window.history.pushState({}, '', '/');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
 
   const getPageTitle = useCallback(() => {
     if (onlyTrending) return "Trending Job Alerts 2025";
@@ -239,19 +257,49 @@ function App() {
               <section>
                 <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Sector</h2>
                 <ul className="space-y-2 list-none p-0">
-                  {CATEGORIES.map(c => <li key={c.id}><a href={`#/category/${c.id}`} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{c.label} Alerts</a></li>)}
+                  {CATEGORIES.map(c => (
+                    <li key={c.id}>
+                      <a 
+                        href={`/category/${c.id}`} 
+                        onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/category/${c.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
+                        className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors"
+                      >
+                        {c.label} Alerts
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </section>
               <section>
                 <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Qualification</h2>
                 <ul className="space-y-2 list-none p-0">
-                  {QUALIFICATIONS.map(q => <li key={q.id}><a href={`#/qualification/${q.id}`} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{q.label} Jobs</a></li>)}
+                  {QUALIFICATIONS.map(q => (
+                    <li key={q.id}>
+                      <a 
+                        href={`/qualification/${q.id}`} 
+                        onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/qualification/${q.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
+                        className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors"
+                      >
+                        {q.label} Jobs
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </section>
               <section>
                 <h2 className="text-lg font-black uppercase tracking-widest mb-4 border-b-2 border-blue-600 pb-2 text-blue-900">By Region</h2>
                 <div className="grid grid-cols-1 gap-1">
-                  {STATES.map(s => <li key={s.id} className="list-none"><a href={`#/${s.id}`} className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors">{s.label}</a></li>)}
+                  {STATES.map(s => (
+                    <li key={s.id} className="list-none">
+                      <a 
+                        href={`/${s.id}`} 
+                        onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', `/${s.id}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
+                        className="text-blue-700 hover:text-red-600 font-bold text-xs uppercase transition-colors"
+                      >
+                        {s.label}
+                      </a>
+                    </li>
+                  ))}
                 </div>
               </section>
             </div>
@@ -265,9 +313,9 @@ function App() {
               <h3 className="text-lg font-black text-blue-900 uppercase">Information Security</h3>
               <p>We do not collect personal identifiable information (PII) like names or addresses. We only track anonymous visit data to improve site performance and relevancy of job alerts.</p>
               <h3 className="text-lg font-black text-blue-900 uppercase">External Official Links</h3>
-              <p>Our job detail pages link directly to official Government Department websites. Users are encouraged to verify information on the official portals before applying. We are not responsible for the privacy practices of external sites.</p>
+              <p>Our job detail pages link directly to official Government Department websites. Users are encouraged to verify information on the official portals before applying.</p>
               <h3 className="text-lg font-black text-blue-900 uppercase">Updates</h3>
-              <p>This policy may be updated from time to time. Please check back regularly to stay informed about how we protect your information.</p>
+              <p>This policy may be updated from time to time. Please check back regularly to stay informed.</p>
             </div>
           </StaticPage>
         );
@@ -275,8 +323,7 @@ function App() {
         return (
           <StaticPage title="Contact Support" onBack={handleNavigateHome}>
             <div className="max-w-2xl space-y-8">
-              <p className="text-gray-700 font-medium">Have questions or found an issue with a job link? Reach out to us via the channels below. We aim to respond to all inquiries within 24 hours.</p>
-              
+              <p className="text-gray-700 font-medium">Have questions or found an issue with a job link? Reach out to us via the channels below.</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 group hover:border-blue-400 transition-colors">
                   <h4 className="font-black uppercase tracking-widest text-[10px] text-blue-800 mb-2">Email Helpdesk</h4>
@@ -286,13 +333,6 @@ function App() {
                   <h4 className="font-black uppercase tracking-widest text-[10px] text-blue-800 mb-2">Social Hub</h4>
                   <a href="https://t.me/freegovtjob" target="_blank" rel="noopener" className="text-blue-600 font-bold hover:underline block">Telegram @freegovtjob</a>
                 </div>
-              </div>
-
-              <div className="mt-8 p-6 bg-red-50 border border-red-100 rounded-lg">
-                <h4 className="font-black text-red-800 mb-4 uppercase text-xs">Important Disclaimer</h4>
-                <p className="text-xs text-red-700 leading-loose font-medium">
-                  FreeGovtJob.info is an information-only portal. We are not associated with any government body. Candidates are strongly advised to check the official notification from the respective department's website before applying.
-                </p>
               </div>
             </div>
           </StaticPage>
@@ -310,7 +350,7 @@ function App() {
                     selectedState={selectedState}
                     selectedQuals={selectedQuals}
                     selectedCats={selectedCats}
-                    onStateChange={setSelectedState}
+                    onStateChange={(s) => { window.history.pushState({}, '', `/${s}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
                     onQualsChange={setSelectedQuals}
                     onCatsChange={setSelectedCats}
                     onReset={handleResetFilters}
@@ -318,7 +358,6 @@ function App() {
                 </div>
                 <div className="flex items-center gap-2">
                   <a href="https://t.me/freegovtjob" target="_blank" rel="noopener noreferrer" className="bg-[#0088cc] text-white px-3 py-1.5 rounded text-[9px] font-black uppercase tracking-widest hover:bg-[#0077b5] shadow-sm flex items-center gap-1.5">
-                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M23.91 3.79L20.3 20.84c-.25 1.21-.98 1.5-2 .94l-5.5-4.07-2.66 2.57c-.3.3-.55.56-1.1.56l.4-5.63 10.25-9.27c.45-.4-.1-.6-.7-.2L6.32 12.5l-5.45-1.7c-1.2-.37-1.2-1.2.25-1.77l21.31-8.21c1-.37 1.86.23 1.48 1.97z"/></svg>
                      Join Telegram
                   </a>
                 </div>
@@ -349,17 +388,17 @@ function App() {
               <QuickLinkSection 
                 title="Sarkari Jobs by Sector" 
                 items={CATEGORIES} 
-                getHref={(id) => `#/category/${id}`} 
+                getHref={(id) => `/category/${id}`} 
               />
               <QuickLinkSection 
                 title="Jobs by Qualification" 
                 items={QUALIFICATIONS} 
-                getHref={(id) => `#/qualification/${id}`} 
+                getHref={(id) => `/qualification/${id}`} 
               />
               <QuickLinkSection 
                 title="Jobs by State" 
                 items={STATES} 
-                getHref={(id) => `#/${id}`} 
+                getHref={(id) => `/${id}`} 
               />
               <div className="bg-blue-50 border border-blue-200 p-4 rounded text-center shadow-sm">
                  <p className="text-[10px] font-bold text-blue-800 uppercase mb-2">Never Miss An Update</p>
@@ -383,31 +422,14 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col items-center gap-6">
             <div className="bg-white p-1.5 rounded shadow-lg cursor-pointer hover:scale-105 transition-transform" onClick={handleNavigateHome}>
-              <img 
-                src={logoUrl} 
-                alt="FreeGovtJob Portal Footer" 
-                className="h-10 md:h-12 w-auto object-contain"
-                crossOrigin="anonymous"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  if (!target.src.includes('uc?export')) {
-                    target.src = "https://drive.google.com/uc?export=view&id=16mxMJQS75JFnupMKIFRtiOzPECzE94qY";
-                  }
-                }}
-              />
+              <img src={logoUrl} alt="FreeGovtJob Portal Footer" className="h-10 md:h-12 w-auto object-contain" crossOrigin="anonymous" />
             </div>
             
             <nav className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-              <a href="#/sitemap" className="hover:text-blue-400 transition-colors">Sitemap</a>
-              <a href="#/privacy-policy" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
-              <a href="#/contact-us" className="hover:text-blue-400 transition-colors">Contact Support</a>
+              <a href="/sitemap" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/sitemap'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-blue-400 transition-colors">Sitemap</a>
+              <a href="/privacy-policy" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/privacy-policy'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-blue-400 transition-colors">Privacy Policy</a>
+              <a href="/contact-us" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/contact-us'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="hover:text-blue-400 transition-colors">Contact Support</a>
             </nav>
-
-            <div className="text-center space-y-2">
-              <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest max-w-lg mx-auto opacity-70">
-                Helping thousands of aspirants find their dream government career through verified job notifications across India.
-              </p>
-            </div>
             
             <div className="pt-4 border-t border-gray-800 w-full text-center">
               <div className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600">
