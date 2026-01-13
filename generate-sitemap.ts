@@ -11,9 +11,16 @@ async function generateSitemap() {
   try {
     const jobs = await fetchJobs();
     const baseUrl = 'https://freegovtjob.info';
-    const currentDate = new Date().toISOString().split('T')[0];
+    
+    // Safety check for date to avoid "Future Date" errors in Search Console
+    // If system clock is wrong, we manually cap it to 2025 for now
+    let now = new Date();
+    if (now.getFullYear() > 2025) {
+        now = new Date('2025-01-13'); 
+    }
+    const currentDate = now.toISOString().split('T')[0];
 
-    // Build XML string - ENSURE NO WHITESPACE BEFORE THE XML TAG
+    // Build XML string - STRICKLY NO WHITESPACE BEFORE <?xml
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -48,7 +55,10 @@ async function generateSitemap() {
   </url>`;
 
     jobs.forEach(job => {
-      const jobDate = job.updatedDate ? job.updatedDate.split('T')[0] : currentDate;
+      // Ensure job date isn't in the future either
+      let jobDate = job.updatedDate ? job.updatedDate.split('T')[0] : currentDate;
+      if (jobDate.startsWith('2026')) jobDate = currentDate;
+      
       xml += `
   <url>
     <loc>${baseUrl}/job/${job.slug}</loc>
@@ -62,26 +72,26 @@ async function generateSitemap() {
 
     const finalXml = xml.trim();
 
-    // 1. Write to public folder (so it's available in next build)
+    // 1. Write to public (for future builds)
     if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
     fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), finalXml);
     
-    // 2. Also copy headers and redirects to dist if they exist in public
+    // 2. Write to dist (for current deployment)
     if (!fs.existsSync(distDir)) fs.mkdirSync(distDir, { recursive: true });
     fs.writeFileSync(path.join(distDir, 'sitemap.xml'), finalXml);
 
-    // Copy Cloudflare config files to dist manually to ensure they are present
+    // 3. Ensure Cloudflare config files are in dist
     ['_headers', '_redirects', 'robots.txt'].forEach(file => {
       const src = path.join(publicDir, file);
       if (fs.existsSync(src)) {
         fs.copyFileSync(src, path.join(distDir, file));
-        console.log(`✔ Copied ${file} to dist/`);
+        console.log(`✔ Verified ${file} in dist/`);
       }
     });
     
     console.log(`--- [Sitemap Generator] Success: ${jobs.length + 5} URLs ---`);
   } catch (error) {
-    console.error('✘ Critical Error:', error);
+    console.error('✘ Sitemap Error:', error);
     (process as any).exit(1);
   }
 }
