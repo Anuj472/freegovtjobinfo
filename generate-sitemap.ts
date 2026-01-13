@@ -1,5 +1,6 @@
+
 import fs from 'fs';
-import { fetchJobs } from './services/bloggerService';
+import { fetchJobs } from './services/bloggerService.js';
 
 async function generateSitemap() {
   console.log('--- [Sitemap Generator] Starting ---');
@@ -46,9 +47,7 @@ async function generateSitemap() {
   </url>`;
 
     // Dynamic Job Notification Pages
-    // Mapping Blogger posts to individual URL nodes
     jobs.forEach(job => {
-      // Use job's actual update date if available, otherwise fallback to current
       const jobDate = job.updatedDate ? job.updatedDate.split('T')[0] : currentDate;
       xml += `
   <url>
@@ -61,22 +60,25 @@ async function generateSitemap() {
 
     xml += '\n</urlset>';
 
-    // Output 1: Write to Public folder (for local dev visibility)
-    if (!fs.existsSync('./public')) fs.mkdirSync('./public');
+    // Output 1: Write to Public folder
+    if (!fs.existsSync('./public')) {
+        fs.mkdirSync('./public', { recursive: true });
+    }
     fs.writeFileSync('./public/sitemap.xml', xml);
     console.log('✔ Successfully saved to ./public/sitemap.xml');
 
-    // Output 2: Write to Dist folder (Crucial for Cloudflare/Hosting deployment)
+    // Output 2: Write to Dist folder
     if (fs.existsSync('./dist')) {
       fs.writeFileSync('./dist/sitemap.xml', xml);
       console.log('✔ Successfully saved to ./dist/sitemap.xml');
     } else {
-      console.warn('⚠ Warning: ./dist folder not found. Run "npm run build" to ensure sitemap is deployed.');
+      console.warn('⚠ Warning: ./dist folder not found yet. It will be generated during the next build step.');
     }
     
     console.log(`--- [Sitemap Generator] Complete: ${jobs.length + 5} URLs indexed ---`);
   } catch (error) {
     console.error('✘ Sitemap Generation Failed:', error);
+    // Fix: Use type assertion to bypass 'Property exit does not exist on type Process' error
     (process as any).exit(1);
   }
 }
