@@ -5,10 +5,7 @@ import { fetchJobs } from './services/bloggerService.js';
 async function generateSitemap() {
   console.log('--- [Sitemap Generator] Starting ---');
   
-  // Ensure we have a dist directory to write to
-  // Fix: Cast process to any to resolve property 'cwd' not found on type 'Process'
   const distDir = path.resolve((process as any).cwd(), 'dist');
-  // Fix: Cast process to any to resolve property 'cwd' not found on type 'Process'
   const publicDir = path.resolve((process as any).cwd(), 'public');
 
   try {
@@ -16,7 +13,7 @@ async function generateSitemap() {
     const baseUrl = 'https://freegovtjob.info';
     const currentDate = new Date().toISOString().split('T')[0];
 
-    // Build the XML string - NO LEADING WHITESPACE
+    // Build XML string - ENSURE NO WHITESPACE BEFORE THE XML TAG
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -50,7 +47,6 @@ async function generateSitemap() {
     <priority>0.5</priority>
   </url>`;
 
-    // Add dynamic job pages
     jobs.forEach(job => {
       const jobDate = job.updatedDate ? job.updatedDate.split('T')[0] : currentDate;
       xml += `
@@ -64,25 +60,29 @@ async function generateSitemap() {
 
     xml += '\n</urlset>';
 
-    // Write to public folder for dev
-    if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
-    fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), xml.trim());
-    console.log('✔ Saved to public/sitemap.xml');
+    const finalXml = xml.trim();
 
-    // Write to dist folder for production deployment
-    if (!fs.existsSync(distDir)) {
-      console.log('Creating dist directory...');
-      fs.mkdirSync(distDir, { recursive: true });
-    }
+    // 1. Write to public folder (so it's available in next build)
+    if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
+    fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), finalXml);
     
-    fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml.trim());
-    console.log('✔ Saved to dist/sitemap.xml');
+    // 2. Also copy headers and redirects to dist if they exist in public
+    if (!fs.existsSync(distDir)) fs.mkdirSync(distDir, { recursive: true });
+    fs.writeFileSync(path.join(distDir, 'sitemap.xml'), finalXml);
+
+    // Copy Cloudflare config files to dist manually to ensure they are present
+    ['_headers', '_redirects', 'robots.txt'].forEach(file => {
+      const src = path.join(publicDir, file);
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, path.join(distDir, file));
+        console.log(`✔ Copied ${file} to dist/`);
+      }
+    });
     
     console.log(`--- [Sitemap Generator] Success: ${jobs.length + 5} URLs ---`);
   } catch (error) {
-    console.error('✘ CRITICAL ERROR: Sitemap Generation Failed:', error);
-    // Fix: Cast process to any to resolve property 'exit' not found on type 'Process'
-    (process as any).exit(1); // Fail the build
+    console.error('✘ Critical Error:', error);
+    (process as any).exit(1);
   }
 }
 
