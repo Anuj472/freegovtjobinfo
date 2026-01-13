@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Job, PageType } from './types';
 import { fetchJobs, getJobBySlug } from './services/bloggerService';
@@ -109,20 +108,6 @@ const QuickLinkSection = ({ title, items, getHref }: { title: string, items: any
         </a>
       ))}
     </div>
-  </div>
-);
-
-const MobileTicker = () => (
-  <div className="bg-red-600 text-white overflow-hidden whitespace-nowrap py-1.5 border-b border-red-700">
-    <div className="inline-block animate-[scroll_25s_linear_infinite] px-4 text-[9px] font-black uppercase tracking-widest">
-      Latest Updates: SSC CGL 2025 Verification Desk Complete • Railway RRB NTPC Notifications Released • Verified Sarkari Result Alerts 2025-26 •
-    </div>
-    <style>{`
-      @keyframes scroll {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-      }
-    `}</style>
   </div>
 );
 
@@ -375,7 +360,6 @@ function App({ initialData }: AppProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 text-sm overflow-x-hidden antialiased">
-      <MobileTicker />
       <Header onNavigateHome={handleNavigateHome} />
       <main className="flex-grow container mx-auto px-4 py-8 lg:py-12 max-w-7xl">{renderContent()}</main>
       <footer className="bg-blue-950 text-white mt-auto border-t-8 border-blue-700">
