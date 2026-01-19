@@ -16,12 +16,24 @@ function escapeXml(unsafe: string): string {
 }
 
 /**
+ * Gets the actual current date in YYYY-MM-DD format
+ * CRITICAL: Uses real system time, not hardcoded dates
+ */
+function getCurrentDate(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * Validates and formats date to ISO format (YYYY-MM-DD)
- * Ensures date is never in the future
+ * CRITICAL: Ensures date is NEVER in the future (Google Search Console requirement)
  */
 function getSafeDate(dateStr?: string): string {
+  const currentDate = getCurrentDate();
   const now = new Date();
-  const currentDate = now.toISOString().split('T')[0];
   
   if (!dateStr) return currentDate;
   
@@ -29,10 +41,16 @@ function getSafeDate(dateStr?: string): string {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return currentDate;
     
-    // Cap to current date if in future
-    if (date > now) return currentDate;
+    // CRITICAL: Cap to current date if in future
+    if (date > now) {
+      console.warn(`⚠️  Future date detected (${dateStr}), capping to ${currentDate}`);
+      return currentDate;
+    }
     
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   } catch {
     return currentDate;
   }
@@ -66,8 +84,10 @@ async function generateSitemap() {
   const root = (process as any).cwd();
   const publicDir = path.join(root, 'public');
   const distDir = path.join(root, 'dist');
-  const currentDate = new Date().toISOString().split('T')[0];
+  const currentDate = getCurrentDate();
   const baseUrl = 'https://freegovtjob.info';
+
+  console.log(`📅 Current date: ${currentDate}`);
 
   try {
     // Fetch jobs data
@@ -141,9 +161,17 @@ async function generateSitemap() {
 
     // Job pages - dynamic content
     console.log('💼 Adding job pages...');
+    let futureDateCount = 0;
     jobs.forEach(job => {
       if (job.slug) {
-        const jobDate = getSafeDate(job.updatedDate || job.publishedDate);
+        const originalDate = job.updatedDate || job.publishedDate;
+        const jobDate = getSafeDate(originalDate);
+        
+        // Track if we had to cap a future date
+        if (originalDate && new Date(originalDate) > new Date()) {
+          futureDateCount++;
+        }
+        
         urls.push(createUrlEntry({
           loc: `${baseUrl}/job/${job.slug}`,
           lastmod: jobDate,
@@ -152,6 +180,10 @@ async function generateSitemap() {
         }));
       }
     });
+    
+    if (futureDateCount > 0) {
+      console.log(`⚠️  Capped ${futureDateCount} future dates to current date`);
+    }
     console.log(`✅ Added ${jobs.length} job pages`);
 
     // Static pages - lower priority
@@ -173,7 +205,7 @@ async function generateSitemap() {
       }));
     });
 
-    // Build final XML
+    // Build final XML with proper declaration
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -185,6 +217,13 @@ ${urls.join('\n')}
     // Validate XML structure
     if (!xml.includes('</urlset>')) {
       throw new Error('Invalid XML structure: missing closing tag');
+    }
+
+    // Check for future dates in final XML (safety check)
+    const currentYear = new Date().getFullYear();
+    const futureYearPattern = new RegExp(`<lastmod>(${currentYear + 1}|${currentYear + 2})`, 'g');
+    if (futureYearPattern.test(xml)) {
+      throw new Error('❌ CRITICAL: Future dates detected in sitemap! Google will reject this.');
     }
 
     // Ensure public directory exists
@@ -230,7 +269,8 @@ ${urls.join('\n')}
     console.log(`   States: ${STATES.length - 1}`);
     console.log(`   Generated: ${currentDate}`);
     console.log(`   Location: ${baseUrl}/sitemap.xml`);
-    console.log('\n✅ Sitemap generation completed successfully!\n');
+    console.log('\n✅ Sitemap generation completed successfully!');
+    console.log('📝 Next step: Submit https://freegovtjob.info/sitemap.xml to Google Search Console\n');
 
   } catch (error) {
     console.error('\n❌ Sitemap Generation Failed:');
