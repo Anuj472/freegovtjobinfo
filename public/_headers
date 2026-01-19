@@ -5,10 +5,9 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: interest-cohort=()
 
-# Sitemap XML - Explicit Content-Type
+# Sitemap XML - Must be crawlable by Google
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
-  X-Robots-Tag: noindex
   Cache-Control: public, max-age=3600, must-revalidate
 
 # Robots.txt
