@@ -1,1 +1,17 @@
-�ȭzf��
+# Security Headers
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: interest-cohort=()
+
+# Sitemap XML - Explicit Content-Type
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  X-Robots-Tag: noindex
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Robots.txt
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=86400
