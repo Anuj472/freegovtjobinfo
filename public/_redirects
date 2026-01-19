@@ -1,6 +1,11 @@
-# Cloudflare Pages redirect rules
-# NOTE: Static files (xml, txt, assets) are automatically served if they exist
-# Only non-existent routes fallback to index.html
+# Cloudflare Pages redirect rules for SPA
+# Static assets and files are served directly
+# Only SPA routes fallback to index.html
 
-# SPA fallback - serve index.html for all non-file requests
+# Ensure static files are served as-is (Cloudflare auto-handles these)
+/sitemap.xml /sitemap.xml 200
+/robots.txt /robots.txt 200
+/assets/* /assets/:splat 200
+
+# SPA fallback for all other routes
 /* /index.html 200
