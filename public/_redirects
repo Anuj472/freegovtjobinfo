@@ -1,7 +1,14 @@
-# Cloudflare Pages / Netlify Redirects
-# Ensure sitemap.xml is NOT redirected
-/sitemap.xml /sitemap.xml 200
-/robots.txt /robots.txt 200
+# Critical: Static files must be served BEFORE SPA fallback
+# These rules are processed in order - first match wins
 
-# SPA fallback - all other routes go to index.html
-/* /index.html 200
+# Explicitly serve static files (not redirected to index.html)
+/sitemap.xml  /sitemap.xml  200!
+/robots.txt   /robots.txt   200!
+/favicon.ico  /favicon.ico  200
+
+# Assets folder should never redirect
+/assets/*     /assets/:splat  200
+
+# SPA fallback - MUST BE LAST
+# Only redirect if no file exists
+/*  /index.html  200
