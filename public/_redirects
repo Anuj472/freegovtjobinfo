@@ -1,14 +1,6 @@
-# Critical: Static files must be served BEFORE SPA fallback
-# These rules are processed in order - first match wins
+# Cloudflare Pages redirect rules
+# NOTE: Static files (xml, txt, assets) are automatically served if they exist
+# Only non-existent routes fallback to index.html
 
-# Explicitly serve static files (not redirected to index.html)
-/sitemap.xml  /sitemap.xml  200!
-/robots.txt   /robots.txt   200!
-/favicon.ico  /favicon.ico  200
-
-# Assets folder should never redirect
-/assets/*     /assets/:splat  200
-
-# SPA fallback - MUST BE LAST
-# Only redirect if no file exists
-/*  /index.html  200
+# SPA fallback - serve index.html for all non-file requests
+/* /index.html 200
