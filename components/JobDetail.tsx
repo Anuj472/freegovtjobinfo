@@ -100,14 +100,6 @@ const JobDetail: React.FC<JobDetailProps> = ({ job, onBack }) => {
                 <button onClick={handleShareTelegram} className="w-full bg-[#0088cc] text-white p-4 rounded-lg flex items-center justify-center gap-3 hover:bg-[#0077b5] transition-colors shadow-sm font-black uppercase text-[10px] tracking-widest">Telegram</button>
               </div>
             </div>
-
-            <div className="bg-blue-900 p-8 rounded-xl text-center shadow-2xl">
-              <h4 className="font-black text-white mb-6 uppercase text-[10px] tracking-[0.2em]">Application Hub</h4>
-              <div className="space-y-4">
-                  <a href={job.externalLink} target="_blank" rel="noopener noreferrer" className="block w-full bg-white text-blue-900 p-4 rounded-lg font-black uppercase text-[11px] tracking-widest hover:bg-gray-100 transition-all shadow-lg active:scale-95">Apply Online</a>
-                  <a href={job.externalLink} target="_blank" rel="noopener noreferrer" className="block w-full border-2 border-white/20 text-white p-4 rounded-lg font-black uppercase text-[11px] tracking-widest hover:bg-white/5 transition-all active:scale-95">Download PDF</a>
-              </div>
-            </div>
           </div>
         </div>
       </div>
