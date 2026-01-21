@@ -1,7 +1,8 @@
 import { Job } from '../types';
 import { STATES, QUALIFICATIONS, CATEGORIES } from '../constants';
 
-const BLOGGER_API_KEY = 'AIzaSyCl_oje2gH5QYD24aTEU7d9OoVsO9ZDLqk';
+// Use environment variable for API key (will be set in build process)
+const BLOGGER_API_KEY = import.meta.env.VITE_BLOGGER_API_KEY || '';
 const BLOGGER_BLOG_ID = '6302142054352195282';
 const BASE_URL = `https://www.googleapis.com/blogger/v3/blogs/${BLOGGER_BLOG_ID}`;
 
