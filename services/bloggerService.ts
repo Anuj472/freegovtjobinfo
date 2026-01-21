@@ -2,9 +2,19 @@ import { Job } from '../types';
 import { STATES, QUALIFICATIONS, CATEGORIES } from '../constants';
 
 // Support both Vite (import.meta.env) and Node.js (process.env) environments
-const BLOGGER_API_KEY = typeof import !== 'undefined' && import.meta?.env?.VITE_BLOGGER_API_KEY 
-  ? import.meta.env.VITE_BLOGGER_API_KEY 
-  : process.env.VITE_BLOGGER_API_KEY || '';
+// In Vite build: import.meta.env is available
+// In Node.js (sitemap generation): process.env is available
+const BLOGGER_API_KEY = (() => {
+  // Try Vite environment first (browser/build)
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    return import.meta.env.VITE_BLOGGER_API_KEY || '';
+  }
+  // Fall back to Node.js environment (sitemap generation)
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env.VITE_BLOGGER_API_KEY || '';
+  }
+  return '';
+})();
 
 const BLOGGER_BLOG_ID = '6302142054352195282';
 const BASE_URL = `https://www.googleapis.com/blogger/v3/blogs/${BLOGGER_BLOG_ID}`;
