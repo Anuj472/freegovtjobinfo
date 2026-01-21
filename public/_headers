@@ -1,16 +1,60 @@
-# Security Headers
+# Global headers for all routes
 /*
-  X-Frame-Options: DENY
+  # Security headers
+  X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: interest-cohort=()
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+  
+  # Performance headers
+  X-DNS-Prefetch-Control: on
+  
+# Cache static assets aggressively
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  
+# Cache JS/CSS with short-term cache
+*.js
+  Cache-Control: public, max-age=86400, must-revalidate
+  
+*.css
+  Cache-Control: public, max-age=86400, must-revalidate
 
-# Sitemap XML - Must be crawlable by Google
-/sitemap.xml
-  Content-Type: application/xml; charset=utf-8
+# Cache images
+*.jpg
+  Cache-Control: public, max-age=604800, immutable
+  
+*.jpeg
+  Cache-Control: public, max-age=604800, immutable
+  
+*.png
+  Cache-Control: public, max-age=604800, immutable
+  
+*.webp
+  Cache-Control: public, max-age=604800, immutable
+  
+*.svg
+  Cache-Control: public, max-age=604800, immutable
+
+# Cache fonts
+*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  
+*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  
+*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML - short cache for dynamic content
+*.html
   Cache-Control: public, max-age=3600, must-revalidate
-
-# Robots.txt
+  
+# Sitemap and robots
+/sitemap.xml
+  Cache-Control: public, max-age=86400, must-revalidate
+  Content-Type: application/xml
+  
 /robots.txt
-  Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=86400, must-revalidate
+  Content-Type: text/plain
