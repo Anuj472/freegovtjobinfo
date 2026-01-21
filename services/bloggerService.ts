@@ -1,8 +1,11 @@
 import { Job } from '../types';
 import { STATES, QUALIFICATIONS, CATEGORIES } from '../constants';
 
-// Use environment variable for API key (will be set in build process)
-const BLOGGER_API_KEY = import.meta.env.VITE_BLOGGER_API_KEY || '';
+// Support both Vite (import.meta.env) and Node.js (process.env) environments
+const BLOGGER_API_KEY = typeof import !== 'undefined' && import.meta?.env?.VITE_BLOGGER_API_KEY 
+  ? import.meta.env.VITE_BLOGGER_API_KEY 
+  : process.env.VITE_BLOGGER_API_KEY || '';
+
 const BLOGGER_BLOG_ID = '6302142054352195282';
 const BASE_URL = `https://www.googleapis.com/blogger/v3/blogs/${BLOGGER_BLOG_ID}`;
 
