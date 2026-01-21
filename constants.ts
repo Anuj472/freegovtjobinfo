@@ -1,4 +1,3 @@
-
 export const SITE_NAME = "FreeGovtJob.info";
 export const SITE_BRANDING = "Latest Govt Jobs 2025-26";
 
@@ -59,4 +58,5 @@ export const CATEGORIES = [
   { id: 'ssc', label: 'SSC', code: 'SSC' },
   { id: 'upsc', label: 'UPSC', code: 'UPSC' },
   { id: 'defense', label: 'Defense', code: 'Defense' },
+  { id: 'it', label: 'IT', code: 'IT' },
 ];
