@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BVMBXPLLG9"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-BVMBXPLLG9');
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    
+    <!-- Preconnect to external domains for faster resource loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="https://www.googleapis.com">
+    <link rel="dns-prefetch" href="https://esm.sh">
     
     <title>FreeGovtJob.info - Latest Govt Jobs 2025-26 | Sarkari Result & Daily Job Alerts</title>
     <meta name="title" content="FreeGovtJob.info - Latest Govt Jobs 2025-26 | Sarkari Result & Daily Job Alerts">
@@ -21,10 +21,32 @@
     <meta name="robots" content="index, follow">
     <link id="canonical-link" rel="canonical" href="https://freegovtjob.info/" />
 
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1964422373240810"
-     crossorigin="anonymous"></script>
+    <!-- Critical CSS inline to prevent render blocking -->
+    <style>
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f9fafb;
+            color: #111827;
+            margin: 0;
+        }
+        #root { min-height: 100vh; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+        .animate-blink { animation: blink 1s infinite; }
+        
+        /* Loading skeleton to improve perceived performance */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s ease-in-out infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
 
+    <!-- Schema.org structured data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -41,26 +63,40 @@
     }
     </script>
 
+    <!-- Load Tailwind CSS with optimized strategy -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-        .animate-blink { animation: blink 1s infinite; }
-    </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "fs": "https://esm.sh/fs@^0.0.1-security",
-    "path": "https://esm.sh/path@^0.12.7"
-  }
-}
-</script>
+    
+    <!-- Preload critical font with font-display: swap for faster text rendering -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet"></noscript>
+
+    <!-- Import maps for ES modules -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.3",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "vite": "https://esm.sh/vite@^7.3.1",
+        "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+        "fs": "https://esm.sh/fs@^0.0.1-security",
+        "path": "https://esm.sh/path@^0.12.7"
+      }
+    }
+    </script>
+
+    <!-- Defer non-critical analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BVMBXPLLG9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BVMBXPLLG9');
+    </script>
+
+    <!-- Defer AdSense to not block page load -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1964422373240810"
+     crossorigin="anonymous"></script>
 </head>
 <body class="bg-gray-50 text-gray-900">
     <div id="root"></div>
