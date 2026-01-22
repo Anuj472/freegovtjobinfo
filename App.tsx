@@ -329,9 +329,24 @@ function App({ initialData }: AppProps) {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <div className="lg:col-span-3">
               <div className="flex flex-col gap-6 mb-8">
+                {/* SEO FIX: H1 with 'Govt Jobs' keyword */}
                 <h1 className="text-2xl md:text-3xl font-black text-blue-900 uppercase tracking-tighter border-b-4 border-blue-700 pb-2 inline-block self-start">
-                   Latest Verified Jobs 2025-26
+                   Latest Govt Jobs 2025-26 | Government Jobs Alert
                 </h1>
+                
+                {/* SEO FIX: Long-form content with semantic keywords */}
+                <div className="bg-gradient-to-r from-blue-50 to-white border-l-4 border-blue-600 p-6 rounded-lg shadow-sm space-y-4">
+                  <p className="text-sm leading-relaxed text-gray-700">
+                    Welcome to <strong>FreeGovtJob.info</strong> - India's most trusted portal for <strong>latest government jobs</strong> and <strong>sarkari result</strong> updates. We provide verified <strong>govt jobs</strong> notifications from official government sources including SSC, Railway, Banking, UPSC, State PSCs, and <strong>public service</strong> commissions across India.
+                  </p>
+                  <p className="text-sm leading-relaxed text-gray-700">
+                    Our editorial team manually verifies every <strong>government job</strong> listing against official gazette notifications to ensure authenticity. Whether you're looking for central government jobs, state government vacancies, or PSU recruitments, we cover all <strong>latest government jobs</strong> with application deadlines, eligibility criteria, and direct application links.
+                  </p>
+                  <p className="text-sm leading-relaxed text-gray-700">
+                    Browse <strong>govt jobs</strong> by state, qualification (10th, 12th, Graduate, Post Graduate), or sector (Police, Railway, Banking, Teaching, Defense, IT). Get instant <strong>public service</strong> job alerts for SSC CGL, SSC CHSL, Railway RRB, IBPS PO, UPSC Civil Services, and thousands of other <strong>government jobs</strong> posted daily.
+                  </p>
+                </div>
+
                 <FilterBar 
                   selectedState={selectedState} selectedQuals={selectedQuals} selectedCats={selectedCats}
                   onStateChange={(s) => { window.history.pushState({}, '', `/${s}`); window.dispatchEvent(new PopStateEvent('popstate')); }}
