@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     
+    <!-- Favicon for Google Search and Browser Tab -->
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY" />
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY" />
+    <link rel="shortcut icon" href="https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY" />
+    
     <!-- Preconnect to external domains for faster resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,7 +66,35 @@
         }
     </style>
 
-    <!-- Enhanced Schema.org structured data for rich snippets -->
+    <!-- PRIMARY: Organization Schema for Logo in Google Search Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://freegovtjob.info/#organization",
+      "name": "FreeGovtJob.info",
+      "alternateName": "Free Govt Job",
+      "url": "https://freegovtjob.info",
+      "logo": "https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY",
+      "description": "Verified Government Job alerts portal with manual verification from Official Gazettes",
+      "foundingDate": "2024",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "IN"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "info.freegovtinfo@gmail.com",
+        "contactType": "Customer Service",
+        "availableLanguage": ["English", "Hindi"]
+      },
+      "sameAs": [
+        "https://t.me/freegovtjob"
+      ]
+    }
+    </script>
+
+    <!-- WebSite Schema with Search Action -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -79,22 +112,7 @@
         "query-input": "required name=search_term_string"
       },
       "publisher": {
-        "@type": "Organization",
-        "name": "FreeGovtJob.info",
-        "url": "https://freegovtjob.info/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://lh3.googleusercontent.com/d/16mxMJQS75JFnupMKIFRtiOzPECzE94qY",
-          "width": 512,
-          "height": 512
-        },
-        "sameAs": ["https://t.me/freegovtjob"],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "email": "info.freegovtinfo@gmail.com",
-          "contactType": "Customer Service",
-          "availableLanguage": ["en", "hi"]
-        }
+        "@id": "https://freegovtjob.info/#organization"
       }
     }
     </script>
