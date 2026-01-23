@@ -12,6 +12,7 @@
  *   npm run test:indexing
  */
 
+import 'dotenv/config';
 import { submitUrlToIndex, getIndexingStatus } from '../services/indexingService';
 
 async function testIndexingAPI() {
@@ -24,12 +25,13 @@ async function testIndexingAPI() {
   console.log('🔍 Test 1: Checking credentials...');
   if (!process.env.GOOGLE_INDEXING_CREDENTIALS) {
     console.error('❌ FAILED: GOOGLE_INDEXING_CREDENTIALS not found!');
-    console.error('\nPlease add your Google Service Account JSON to environment variables.');
-    console.error('\nFor local testing, run:');
-    console.error('  export GOOGLE_INDEXING_CREDENTIALS=\'{...your json...}\'');
+    console.error('\nPlease add your Google Service Account JSON to .env file.');
+    console.error('\nFormat:');
+    console.error('  GOOGLE_INDEXING_CREDENTIALS={...json on single line...}');
     process.exit(1);
   }
-  console.log('✅ Credentials found\n');
+  console.log('✅ Credentials found');
+  console.log('   Length:', process.env.GOOGLE_INDEXING_CREDENTIALS.length, 'characters\n');
 
   // Test 2: Parse credentials
   console.log('🔍 Test 2: Parsing credentials...');
@@ -41,6 +43,8 @@ async function testIndexingAPI() {
   } catch (error: any) {
     console.error('❌ FAILED: Invalid JSON format');
     console.error('Error:', error.message);
+    console.error('\nFirst 100 chars:', process.env.GOOGLE_INDEXING_CREDENTIALS.substring(0, 100));
+    console.error('Last 100 chars:', process.env.GOOGLE_INDEXING_CREDENTIALS.slice(-100));
     process.exit(1);
   }
 
@@ -103,5 +107,6 @@ async function testIndexingAPI() {
 // Run the test
 testIndexingAPI().catch(error => {
   console.error('\n❌ Fatal Error:', error.message);
+  console.error(error.stack);
   process.exit(1);
 });
