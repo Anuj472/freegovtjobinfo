@@ -11,14 +11,15 @@
     "deploy": "wrangler pages deploy dist",
     "audit": "npm audit",
     "audit:fix": "npm audit fix",
-    "test:indexing": "tsx --env-file=.env scripts/test-indexing-api.ts",
-    "index:jobs": "tsx --env-file=.env scripts/index-recent-jobs.ts",
-    "index:url": "tsx --env-file=.env scripts/index-single-url.ts"
+    "test:indexing": "node --env-file=.env --loader tsx scripts/test-indexing-api.ts",
+    "index:jobs": "node --env-file=.env --loader tsx scripts/index-recent-jobs.ts",
+    "index:url": "node --env-file=.env --loader tsx scripts/index-single-url.ts"
   },
   "dependencies": {
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "googleapis": "^131.0.0"
+    "googleapis": "^131.0.0",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
