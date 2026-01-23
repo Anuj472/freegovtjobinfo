@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "deploy": "wrangler pages deploy dist",
     "audit": "npm audit",
-    "audit:fix": "npm audit fix"
+    "audit:fix": "npm audit fix",
+    "index:google": "tsx scripts/google-indexing.ts",
+    "index:url": "tsx scripts/google-indexing.ts"
   },
   "dependencies": {
     "react": "^19.2.3",
