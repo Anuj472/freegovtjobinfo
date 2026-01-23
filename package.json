@@ -11,9 +11,9 @@
     "deploy": "wrangler pages deploy dist",
     "audit": "npm audit",
     "audit:fix": "npm audit fix",
-    "test:indexing": "tsx scripts/test-indexing-api.ts",
-    "index:jobs": "tsx scripts/index-recent-jobs.ts",
-    "index:url": "tsx scripts/index-single-url.ts"
+    "test:indexing": "tsx --env-file=.env scripts/test-indexing-api.ts",
+    "index:jobs": "tsx --env-file=.env scripts/index-recent-jobs.ts",
+    "index:url": "tsx --env-file=.env scripts/index-single-url.ts"
   },
   "dependencies": {
     "react": "^19.2.3",
