@@ -17,3 +17,4 @@ jobs:
       - run: npm run index:jobs
         env:
           GOOGLE_INDEXING_CREDENTIALS: ${{ secrets.GOOGLE_INDEXING_CREDENTIALS }}
+
