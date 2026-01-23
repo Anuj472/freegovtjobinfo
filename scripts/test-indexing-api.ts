@@ -12,8 +12,11 @@
  *   npm run test:indexing
  */
 
-import 'dotenv/config';
+import { loadEnv } from './load-env';
 import { submitUrlToIndex, getIndexingStatus } from '../services/indexingService';
+
+// Load environment variables
+loadEnv();
 
 async function testIndexingAPI() {
   console.log('\n' + '='.repeat(70));
