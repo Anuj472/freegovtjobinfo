@@ -11,6 +11,7 @@
     "deploy": "wrangler pages deploy dist",
     "audit": "npm audit",
     "audit:fix": "npm audit fix",
+    "test:indexing": "tsx scripts/test-indexing-api.ts",
     "index:jobs": "tsx scripts/index-recent-jobs.ts",
     "index:url": "tsx scripts/index-single-url.ts"
   },
