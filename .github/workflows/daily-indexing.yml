@@ -2,19 +2,26 @@ name: Daily Job Indexing
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # 6:30 AM IST
-  workflow_dispatch:
+    - cron: '0 1 * * *'  # 6:30 AM IST daily
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
   index:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm ci
-      - run: npm run index:jobs
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run indexing script
         env:
           GOOGLE_INDEXING_CREDENTIALS: ${{ secrets.GOOGLE_INDEXING_CREDENTIALS }}
-
+        run: npm run index:jobs
