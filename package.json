@@ -11,12 +11,13 @@
     "deploy": "wrangler pages deploy dist",
     "audit": "npm audit",
     "audit:fix": "npm audit fix",
-    "index:google": "tsx scripts/google-indexing.ts",
-    "index:url": "tsx scripts/google-indexing.ts"
+    "index:jobs": "tsx scripts/index-recent-jobs.ts",
+    "index:url": "tsx scripts/index-single-url.ts"
   },
   "dependencies": {
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "googleapis": "^131.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
