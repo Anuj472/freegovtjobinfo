@@ -24,4 +24,5 @@ jobs:
       - name: Run indexing script
         env:
           GOOGLE_INDEXING_CREDENTIALS: ${{ secrets.GOOGLE_INDEXING_CREDENTIALS }}
+          VITE_BLOGGER_API_KEY: ${{ secrets.VITE_BLOGGER_API_KEY }}
         run: npm run index:jobs
